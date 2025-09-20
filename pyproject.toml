@@ -25,6 +25,8 @@ requires-poetry = ">=2.1"
 [tool.poetry.group.dev.dependencies]
 
 pytest = "^8.4.2"
+pylint = "^3.3.8"
+mypy = "^1.18.2"
 
 
 [build-system]

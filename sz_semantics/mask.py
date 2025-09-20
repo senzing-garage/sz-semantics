@@ -83,7 +83,7 @@ substituted back later.
     def __init__ (
         self,
         *,
-        token_store: dict = {}
+        token_store: typing.Dict[ str, str ] | None = None
         ) -> None:
         """
 Constructor.
@@ -97,12 +97,16 @@ a given use case.
         """
         self.logger = logging.getLogger(__name__)
         self.key_count: Counter = Counter()
-        self.tokens: dict = token_store
+
+        if token_store is None:
+            token_store = {}
+
+        self.tokens: typing.Dict[ str, str ] = token_store
 
 
     def serialize_json (
         self,
-        data: typing.Any,
+        data: list | dict,
         out_file: pathlib.Path,
         *,
         encoding: str = "utf-8",
@@ -130,22 +134,24 @@ Substitute the original PII values for masked tokens within a text.
 
         for hit in self.PAT_TOKEN.finditer(text):
             key: str = hit.group(0)
-            pii: str = self.tokens.get(key)
+            pii: str | None = self.tokens.get(key)
 
             if debug:
-                self.logger.debug(key, pii)
+                log_msg: str = f"{key} {pii}"
+                self.logger.debug(log_msg)
 
             if pii is not None:
                 head: int = hit.start()
                 tail: int = hit.end()
 
                 if debug:
-                    self.logger.debug(" => ", key, head, tail, pii)
-    
+                    log_msg = f" => {key} {head} {tail} {pii}"
+                    self.logger.debug(log_msg)
+
                 collected.append(text[last_head:head])
                 collected.append(pii)
                 last_head = tail
-                  
+
         collected.append(text[last_head:])
         return "".join(collected)
 
@@ -187,49 +193,51 @@ Handle a key pair for a literal value.
         if isinstance(elem, list):
             return [ key, self.mask_data(elem, debug = debug) ]
 
-        elif isinstance(elem, dict):
+        if isinstance(elem, dict):
             return [ key, self.mask_data(elem, debug = debug) ]
 
-        elif key in self.MASKED_KEYS:
+        if key in self.MASKED_KEYS:
             if debug:
-                self.logger.debug("MASKED:", key, elem)
+                log_msg: str = f"MASKED: {key} {elem}"
+                self.logger.debug(log_msg)
 
             masked_elem: str = self.mask_value(key, elem)
 
             if elem == masked_elem:
-                err_str: str = f"NOT MASKED: {elem} == {masked_elem}"
-                self.logger.error(err_str)
+                log_msg = f"NOT MASKED: {elem} == {masked_elem}"
+                self.logger.error(log_msg)
 
             return [ key, masked_elem ]
 
-        elif isinstance(elem, int) or key in self.KNOWN_KEYS:
+        if isinstance(elem, int) or key in self.KNOWN_KEYS:
             return [ key, elem ]
 
-        elif isinstance(elem, str):
-            err_str = f"UNKNOWN key: {key} {elem}"
-            logging.warning(err_str)
+        if isinstance(elem, str):
+            log_msg = f"UNKNOWN key: {key} {elem}"
+            logging.warning(log_msg)
 
             masked_elem = self.mask_value(key, elem)
 
             if elem == masked_elem:
-                err_str = f"NOT MASKED: {elem} == {masked_elem}"
-                self.logger.error(err_str)
+                log_msg = f"NOT MASKED: {elem} == {masked_elem}"
+                self.logger.error(log_msg)
 
             return [ key, masked_elem ]
 
-        else:
-            if debug:
-                self.logger.debug(key, type(elem))
+        # otherwise pass through
+        if debug:
+            log_msg = f"{key} {type(elem)}"
+            self.logger.debug(log_msg)
 
-            return self.mask_data(elem, debug = debug)
+        return self.mask_data(elem, debug = debug)  # type: ignore
 
 
     def mask_data (
         self,
-        data: typing.Any,
+        data: list | dict,
         *,
         debug: bool = False,
-        ) -> typing.Any:
+        ) -> list | dict:
         """
 Recursive descent through JSON data structures (lists, dictionaries)
 until reaching kev/value pairs or a collection of string literals.
@@ -244,7 +252,7 @@ until reaching kev/value pairs or a collection of string literals.
                 for elem in data
             ]
 
-        elif isinstance(data, dict):
+        if isinstance(data, dict):
             dict_items: dict = {}
 
             for key, elem in data.items():
@@ -253,8 +261,8 @@ until reaching kev/value pairs or a collection of string literals.
 
             return dict_items
 
-        elif isinstance(data, str):
-            hit: re.Match = self.PAT_KEY_PAIR.match(data)
+        if isinstance(data, str):
+            hit: re.Match | None = self.PAT_KEY_PAIR.match(data)
 
             if hit is not None:
                 key = hit.group(1)
@@ -264,12 +272,12 @@ until reaching kev/value pairs or a collection of string literals.
 
                 return result
 
-        elif isinstance(data, int):
+        if isinstance(data, int):
             return data
 
-        else:
-            # a more serious edge case, since we should already have
-            # full coverage on the possible data types from eleemnts
-            # of deserialized JSON
-            err_str: str = f"Unknown data type: {type(data)}"
-            self.logger.error(err_str)
+        # a more serious edge case, since we should already have
+        # full coverage on the possible data types from eleemnts
+        # of deserialized JSON
+        log_msg = f"Unknown data type: {type(data)}"
+        self.logger.error(log_msg)
+        return data

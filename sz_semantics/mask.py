@@ -96,7 +96,7 @@ Add values to `KNOWN_KEYS` and `MASKED_KEYS` as needed for
 a given use case.
         """
         self.logger = logging.getLogger(__name__)
-        self.key_count: Counter = Counter(self.MASKED_KEYS)
+        self.key_count: Counter = Counter()
         self.tokens: dict = token_store
 
 

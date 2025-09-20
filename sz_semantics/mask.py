@@ -15,7 +15,7 @@ import re
 import typing
 
 
-class SzMask:
+class Mask:
     """
 Mask the PII values within Senzing output with tokens, which can be
 substituted back later.

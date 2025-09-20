@@ -12,11 +12,11 @@ returned text after the roundtrip, to maintain _data privacy_.
 
 ```python
 import json
-from sz_semantics import SzMask
+from sz_semantics import Mask
 
 data: dict = { "ENTITY_NAME": "Robert Smith" }
 
-sz_mask: SzMask = SzMask()
+sz_mask: Mask = Mask()
 masked_data: dict = sz_mask.mask_data(data)
 
 masked_text: str = json.dumps(masked_data)
@@ -36,10 +36,10 @@ pip install sz_sematics
 
 ## Demo
 
-Run the `demo.py` script with one of the JSON data files, for example:
+Run the `demo.py` script with an example JSON data file:
 
 ```bash
-poetry run python3 demo.py data/get.json
+python3 demo.py data/get.json
 ```
 
 

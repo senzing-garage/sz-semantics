@@ -12,11 +12,11 @@ import pathlib
 import sys
 import typing
 
-from sz_semantics import SzMask
+from sz_semantics import Mask
 
 
 if __name__ == "__main__":
-    sz_mask: SzMask = SzMask()
+    sz_mask: Mask = Mask()
 
     ## load a JSON file to use as input, from the CLI argument
     data_path: str = sys.argv[1]

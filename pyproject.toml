@@ -1,8 +1,8 @@
 [project]
 
 name = "sz_semantics"
-version = "0.1.0"
-description = "Transform JSONL output from Senzing SDK for use with graph technologies, semantics, and LLM integration"
+version = "1.0.0"
+description = "Transform JSON output from Senzing SDK for use with graph technologies, semantics, and downstream LLM integration"
 
 authors = [
     { name = "Paco Nathan", email = "paco@senzing.com" }

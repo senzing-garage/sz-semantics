@@ -7,25 +7,53 @@ Example using `sz_semantics` to mask PII values in Senzing JSON.
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
+import logging
 import pathlib
 
 from sz_semantics import Thesaurus
 
 
 if __name__ == "__main__":
-    thes: Thesaurus = Thesaurus()
+    logger: logging.Logger = logging.getLogger(__name__)
+    logging.basicConfig(level = logging.WARNING) # DEBUG
+
+    ## choose your adventure: multiple datasets and their ER exports
+    context: str = "open" # "strw" "truth"
+
+    match context:
+        case "strw":
+            export_path: pathlib.Path = pathlib.Path("data/strw/export.json")
+
+            datasets: list = [
+                "data/strw/acme_biz.json",
+                "data/strw/corp_home.json",
+                "data/strw/orcid.json",
+                "data/strw/scopus.json",
+            ]
+        case "truth":
+            export_path = pathlib.Path("data/truth/export.json")
+
+            datasets = [
+                "data/truth/customers.json",
+                "data/truth/reference.json",
+                "data/truth/watchlist.json",
+            ]
+        case "open":
+            export_path = pathlib.Path("data/open/export.json")
+
+            datasets = [
+                "data/open/open-ownership.json",
+                "data/open/open-sanctions.json",
+            ]
 
     ## load the Senzing entity resolution results into an `RDFlib`
     ## semantic graph, and serialize the resulting thesaurus as
     ## `thesaurus.ttl` in "Turtle" format
+    thes: Thesaurus = Thesaurus()
+
     thes.parse_er_export(
-        [
-            "data/acme_biz.json",
-            "data/corp_home.json",
-            "data/orcid.json",
-            "data/scopus.json",
-        ],
-        export_path = pathlib.Path("data/export.json"),
+        datasets,
+        export_path = export_path,
         er_path = pathlib.Path("thesaurus.ttl"),
         debug = True,
     )

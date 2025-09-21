@@ -107,7 +107,7 @@ Mocked method.
 Subclass and override this method if building a _lexical graph_ using
 NLP lemmas as the thesaurus synonyms.
         """
-        return text.strip().lower()
+        return text.strip().lower().replace('"', "'")
 
 
     def add_lemma (
@@ -339,6 +339,74 @@ the `NetworkX` property graph to initialize a semantic layer.
                     )
 
 
+    @classmethod
+    def scrub_name (
+        cls,
+        name: str,
+        ) -> str:
+        """
+Scrub disallowed characters from a name going into an RDF language property.
+        """
+        return name.replace('"', "'")
+
+
+    def get_name (
+        self,
+        record_id: str,
+        rec_type: str,
+        rec: dict,
+        org_map: typing.Dict[ str, str ],
+        ) -> typing.Tuple[ str, str, typing.List[ str ] ]:
+        """
+Extract the name and optional employer from a data record.
+        """
+        name: str = record_id
+        employer: str = ""
+        urls: typing.List[ str ] = []
+
+        if rec_type == "sz:Organization":
+            names: dict = rec["NAMES"][0]
+
+            if "PRIMARY_NAME_ORG" in names:
+                name = names.get("PRIMARY_NAME_ORG")
+            elif "NAME_ORG" in names:
+                name = names.get("NAME_ORG")
+            else:
+                log_msg = f"No name key? {names}"
+                self.logger.error(log_msg)
+
+            if "LINKS" in rec:
+                for url_dict in rec["LINKS"]:
+                    for url in url_dict.values():
+                        urls.append(url)
+
+            if "WEBSITE_ADDRESS" in rec:
+                urls.append(rec["WEBSITE_ADDRESS"])
+
+        else:
+            if "NAME_FIRST" in rec:
+                name = rec["NAME_FIRST"]
+
+            if "NAME_MIDDLE" in rec:
+                name += " " + rec["NAME_MIDDLE"]
+
+            if "NAME_LAST" in rec:
+                name += " " + rec["NAME_LAST"]
+
+            if "SOURCE_LINKS" in rec:
+                for url_dict in rec["SOURCE_LINKS"]:
+                    for url in url_dict.values():
+                        urls.append(url)
+
+            if "EMPLOYER_NAME" in rec:
+                org_name: str = self.scrub_name(rec["EMPLOYER_NAME"])
+
+                if org_name in org_map:
+                    employer = org_map.get(org_name)  # type: ignore
+
+        return self.scrub_name(name), employer, urls
+
+
     def parse_er_export (  # pylint: disable=R0912,R0913,R0914,R0915
         self,
         datasets: typing.List[ str ],
@@ -386,6 +454,10 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
             for line in fp:
                 data: dict = json.loads(line)
 
+                if debug:
+                    log_msg: str = f"jsonl: {data}"
+                    self.logger.debug(log_msg)
+
                 entity_id: str = self.SZ_PREFIX + str(data["RESOLVED_ENTITY"]["ENTITY_ID"])
                 ent_descrip: str = ""
                 ent_type: str = ""
@@ -406,7 +478,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     rec_list.append({
                         "pred": pred_iri,
                         "obj": rec_iri,
-                        "skos:prefLabel": rec["ENTITY_DESC"],
+                        "skos:prefLabel": self.scrub_name(rec["ENTITY_DESC"]),
                     })
 
                 for rel in data["RELATED_ENTITIES"]:
@@ -426,13 +498,15 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                         "skos:definition": why,
                     })
 
+                ent_descrip = self.scrub_name(ent_descrip)
+
                 ent_node: dict = {
                     "iri": entity_id,
                     "skos:prefLabel": ent_descrip,
                 }
 
                 if debug:
-                    log_msg: str = f"ent: {ent_node}"
+                    log_msg = f"ent: {ent_node}"
                     self.logger.debug(log_msg)
 
                 rdf_frag: str = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
@@ -460,41 +534,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
         # add nodes representing the data records into the RDF graph
         for record_id, rec in data_records.items():
             rec_type: str = f'sz:{rec["RECORD_TYPE"].capitalize()}'
-            name: str = ""
-            employer: str = ""
-            urls: typing.List[ str ] = []
-
-            if rec_type == "sz:Organization":
-                name = rec["NAMES"][0]["PRIMARY_NAME_ORG"]
-
-                if "LINKS" in rec:
-                    for url_dict in rec["LINKS"]:
-                        for url in url_dict.values():
-                            urls.append(url)
-
-                if "WEBSITE_ADDRESS" in rec:
-                    urls.append(rec["WEBSITE_ADDRESS"])
-
-            else:
-                if "NAME_FIRST" in rec:
-                    name = rec["NAME_FIRST"]
-
-                if "NAME_MIDDLE" in rec:
-                    name += " " + rec["NAME_MIDDLE"]
-
-                if "NAME_LAST" in rec:
-                    name += " " + rec["NAME_LAST"]
-
-                if "SOURCE_LINKS" in rec:
-                    for url_dict in rec["SOURCE_LINKS"]:
-                        for url in url_dict.values():
-                            urls.append(url)
-
-                if "EMPLOYER_NAME" in rec:
-                    org_name: str = rec["EMPLOYER_NAME"]
-
-                    if org_name in org_map:
-                        employer = org_map.get(org_name)  # type: ignore
+            name, employer, urls = self.get_name(record_id, rec_type, rec, org_map)
 
             rdf_frag = f"{record_id} rdf:type sz:DataRecord, {rec_type} "
             rdf_frag += f";\n  skos:prefLabel \"{name}\"@{language} "

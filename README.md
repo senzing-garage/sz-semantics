@@ -44,11 +44,15 @@ python3 demo1.py data/get.json
 
 ## Usage: Semantic Represenation
 
-Starting with a small SKOS-based taxonomy, parse the Senzing entity
-resolution results to generate a semantic graph in `RDFlib`, then
-transform this into a `NetworkX` property graph which represents a
-_semantic layer_ -- that is, as the "backbone" for constructing an
-_Entity Resolved Knowledge Graph_.
+Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/),
+parse the Senzing [_entity resolution_](https://senzing.com/what-is-entity-resolution/)
+(ER) results to generate an 
+[`RDFlib`](https://rdflib.readthedocs.io/) _semantic graph_
+then transform this into a 
+[`NetworkX`](https://networkx.org/) _property graph_, which represents a 
+[_semantic layer_](https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/).
+In other words, generate the "backbone" for constructing an
+[_Entity Resolved Knowledge Graph_](https://senzing.com/entity-resolved-knowledge-graphs/).
 
 ```python
 import pathlib
@@ -84,6 +88,8 @@ python3 demo2.py
 Check the generated RDF in `thesaurus.ttl` and the resulting property
 graph in the `sem.json` node-link format file.
 
+
+---
 
 <details>
   <summary>License and Copyright</summary>

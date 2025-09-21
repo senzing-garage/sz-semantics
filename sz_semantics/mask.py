@@ -4,7 +4,7 @@
 """
 Means of masking PII in JSON from the Senzing SDK.
 
-see copyright/license https://github.com/senzing-garage/sz_semantics/README.md
+see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
 from collections import Counter

@@ -3,6 +3,14 @@
 Transform JSON output from the [Senzing SDK](https://senzing.com/docs/python/)
 for use with graph technologies, semantics, and downstream LLM integration.
 
+
+## Install
+
+```bash
+pip install sz_sematics
+```
+
+
 ## Usage: Masking PII
 
 Mask the PII values within Senzing JSON output with tokens which can
@@ -26,21 +34,55 @@ unmasked: str = sz_mask.unmask_text(masked_text)
 print(unmasked)
 ```
 
-
-## Install
+For an example, run the `demo1.py` script with a data file which
+captures Senzing JSON output:
 
 ```bash
-pip install sz_sematics
+python3 demo1.py data/get.json
 ```
 
 
-## Demo
+## Usage: Semantic Represenation
 
-Run the `demo.py` script with an example JSON data file:
+Starting with a small SKOS-based taxonomy, parse the Senzing entity
+resolution results to generate a semantic graph in `RDFlib`, then
+transform this into a `NetworkX` property graph which represents a
+_semantic layer_ -- that is, as the "backbone" for constructing an
+_Entity Resolved Knowledge Graph_.
+
+```python
+import pathlib
+from sz_semantics import Thesaurus
+
+thes: Thesaurus = Thesaurus()
+
+thes.parse_er_export(
+    [
+        "data/acme_biz.json",
+        "data/corp_home.json",
+        "data/orcid.json",
+        "data/scopus.json",
+    ],
+    export_path = pathlib.Path("data/export.json"),
+    er_path = pathlib.Path("thesaurus.ttl"),
+)
+
+thes.load_er_thesaurus(
+    er_path = pathlib.Path("thesaurus.ttl"),
+)
+
+thes.save_sem_layer(pathlib.Path("sem.json"))
+```
+
+For an example, run the `demo2.py` script to process the JSON file
+`data/export.json` which captures Senzing ER exported results:
 
 ```bash
-python3 demo.py data/get.json
+python3 demo2.py
 ```
+
+Check the generated RDF in `thesaurus.ttl` and the resulting property
+graph in the `sem.json` node-link format file.
 
 
 <details>

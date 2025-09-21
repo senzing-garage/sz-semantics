@@ -1,3 +1,8 @@
+# local files
+thesaurus.ttl
+sem.json
+*~
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

@@ -18,7 +18,7 @@ if __name__ == "__main__":
     logging.basicConfig(level = logging.WARNING) # DEBUG
 
     ## choose your adventure: multiple datasets and their ER exports
-    context: str = "open" # "strw" "truth"
+    context: str = "truth" # "open" "strw"
 
     match context:
         case "strw":

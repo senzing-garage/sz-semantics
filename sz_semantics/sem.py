@@ -347,7 +347,7 @@ the `NetworkX` property graph to initialize a semantic layer.
         """
 Scrub disallowed characters from a name going into an RDF language property.
         """
-        return name.replace('"', "'")
+        return name.replace('"', "'").strip()
 
 
     def get_name (
@@ -365,16 +365,25 @@ Extract the name and optional employer from a data record.
         urls: typing.List[ str ] = []
 
         if rec_type == "sz:Organization":
-            names: dict = rec["NAMES"][0]
+            if "NAMES" in rec:
+                names: dict = rec["NAMES"][0]
 
-            if "PRIMARY_NAME_ORG" in names:
-                name = names.get("PRIMARY_NAME_ORG")
-            elif "NAME_ORG" in names:
-                name = names.get("NAME_ORG")
+                if "PRIMARY_NAME_ORG" in names:
+                    name = names.get("PRIMARY_NAME_ORG").strip()
+                elif "NAME_ORG" in names:
+                    name = names.get("NAME_ORG").strip()
+                else:
+                    log_msg = f"No name item? {names}"
+                    self.logger.error(log_msg)
+
+            elif "PRIMARY_NAME_ORG" in rec:
+                name = rec.get("PRIMARY_NAME_ORG").strip()
+
             else:
-                log_msg = f"No name key? {names}"
-                self.logger.error(log_msg)
+                log_msg: str = f"No name? {rec}"
+                self.logger.warning(log_msg)
 
+            # other metadata
             if "LINKS" in rec:
                 for url_dict in rec["LINKS"]:
                     for url in url_dict.values():
@@ -384,15 +393,38 @@ Extract the name and optional employer from a data record.
                 urls.append(rec["WEBSITE_ADDRESS"])
 
         else:
-            if "NAME_FIRST" in rec:
-                name = rec["NAME_FIRST"]
+            if "PRIMARY_NAME_FULL" in rec:
+                name = rec.get("PRIMARY_NAME_FULL").strip()
 
-            if "NAME_MIDDLE" in rec:
-                name += " " + rec["NAME_MIDDLE"]
+            elif "PRIMARY_NAME_LAST" in rec:
+                name = rec.get("PRIMARY_NAME_LAST").strip()
 
-            if "NAME_LAST" in rec:
-                name += " " + rec["NAME_LAST"]
+                if "PRIMARY_NAME_MIDDLE" in rec:
+                    name = rec.get("PRIMARY_NAME_MIDDLE").strip() + " " + name
 
+                if "PRIMARY_NAME_FIRST" in rec:
+                    name = rec.get("PRIMARY_NAME_FIRST").strip() + " " + name
+
+            elif "NAME_LAST" in rec:
+                name = rec.get("NAME_LAST").strip()
+
+                if "NAME_MIDDLE" in rec:
+                    name = rec.get("NAME_MIDDLE").strip() + " " + name
+
+                if "NAME_FIRST" in rec:
+                    name = rec.get("NAME_FIRST").strip() + " " + name
+
+            elif "PRIMARY_NAME_FIRST" in rec:
+                name = rec.get("PRIMARY_NAME_FIRST").strip()
+
+            elif "NATIVE_NAME_FULL" in rec:
+                name = rec.get("NATIVE_NAME_FULL").strip()
+
+            else:
+                log_msg: str = f"No name? {rec}"
+                self.logger.warning(log_msg)
+
+            # other metadata
             if "SOURCE_LINKS" in rec:
                 for url_dict in rec["SOURCE_LINKS"]:
                     for url in url_dict.values():

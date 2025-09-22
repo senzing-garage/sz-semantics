@@ -478,7 +478,7 @@ Extract the name and optional employer from a data record.
         return self.scrub_name(name), employer, urls
 
 
-    def parse_sz_entity (
+    def parse_sz_entity (  # pylint: disable=R0913,R0914
         self,
         data_records: typing.Dict[ str, dict ],
         data: dict,
@@ -550,7 +550,7 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
             log_msg = f"ent: {ent_node}"
             self.logger.debug(log_msg)
 
-        # generate the RDF represenation for this entity 
+        # generate the RDF represenation for this entity
         rdf_frag: str = f"\n{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
 
         if self.use_lemmas:

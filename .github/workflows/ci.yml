@@ -40,6 +40,14 @@ jobs:
           poetry config virtualenvs.in-project true
           poetry install --no-interaction --with dev
 
-      - name: Run tests
+      - name: Run type checking
+        run: |
+          poetry run mypy ./sz_semantics
+
+      - name: Run linting
+        run: |
+          poetry run pylint ./sz_semantics --fail-under=10
+
+      - name: Run unit tests
         run: |
           poetry run pytest -v -s

@@ -1,0 +1,98 @@
+@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
+
+@prefix dc:    <http://purl.org/dc/terms/> .
+@prefix foaf:  <http://xmlns.com/foaf/spec/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix wd:    <http://www.wikidata.org/entity/> .
+
+
+sz:co_occurs_with rdfs:domain skos:Concept ;
+  rdfs:range skos:Concept ;
+  skos:definition "a neighborhood co-occurrence of extracted entities within a lexical graph"@en
+.
+
+sz:compound_elem_of rdfs:domain skos:Concept ;
+  rdfs:range skos:Concept ;
+  skos:definition "an extracted entity which is potentially included in a longer phrase"@en
+.
+
+sz:follows_lexically rdfs:domain skos:Concept ;
+  rdfs:range skos:Concept ;
+  skos:definition "a sequential co-occurrence of extracted entities within a lexical graph"@en
+.
+
+sz:lemma_phrase rdfs:domain skos:Concept ;
+  rdfs:range rdf:langString ;
+  skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en
+.
+
+sz:within_chunk rdfs:domain skos:Concept ;
+  rdfs:range rdfs:Literal ;
+  skos:definition "the source text for an extracted entity"@en
+.
+
+
+sz:SenzingScheme rdf:type skos:ConceptScheme , owl:Ontology ;
+  dc:publisher <https://senzing.com/> ;
+  dc:creator <https://orcid.org/0000-0003-3167-1539> ;
+  skos:definition "A mid-level SKOS taxonomy used for representing Senzing results"@en ;
+  skos:prefLabel "Senzing minimal SKOS taxonomy"@en
+ .
+
+sz:Entity rdf:type skos:Concept , owl:Thing ;
+ skos:inScheme sz:SenzingScheme ;
+ skos:topConceptOf sz:SenzingScheme ;
+ skos:prefLabel "Entity"@en ;
+ sz:lemma_phrase "NOUN.entity"@en ;
+ skos:definition "Anything that can be considered, discussed, or observed; in this context generally a Person or Organization"@en ;
+ dc:identifier wd:Q35120
+.
+
+sz:DataRecord rdf:type skos:Concept , owl:Thing ;
+ skos:inScheme sz:SenzingScheme ;
+ skos:topConceptOf sz:SenzingScheme ;
+ skos:prefLabel "Data Record"@en ;
+ skos:altLabel "Record"@en ;
+ sz:lemma_phrase "NOUN.data NOUN.record"@en ;
+ skos:definition "A composite data type; information block containing specific, identified fields"@en ;
+ dc:identifier wd:Q2470517
+.
+
+
+sz:PeopleGroup rdf:type skos:Concept , sz:Entity ;
+ skos:inScheme sz:SenzingScheme ;
+ skos:topConceptOf sz:SenzingScheme ;
+ skos:prefLabel "People Group"@en ;
+ skos:altLabel "Community"@en ;
+ sz:lemma_phrase "NOUN.people NOUN.group"@en ;
+ skos:definition "A people group is a social unit of human organisms who share common values"@en ;
+ dc:identifier wd:Q177634
+ .
+
+sz:Person rdf:type skos:Concept , foaf:Agent ;
+ skos:inScheme sz:SenzingScheme ;
+ skos:prefLabel "Person"@en ;
+ sz:lemma_phrase "NOUN.person"@en ;
+ skos:definition "A person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
+ dc:identifier wd:Q5 ;
+ skos:broader sz:PeopleGroup
+.
+
+sz:Organization rdf:type skos:Concept , org:Organization ;
+ skos:inScheme sz:SenzingScheme ;
+ skos:prefLabel "Organization"@en ;
+ sz:lemma_phrase "NOUN.organization"@en ;
+ skos:definition "An organization is a social entity established to meet needs or pursue goals"@en ;
+ dc:identifier wd:Q43229 ;
+ skos:broader sz:PeopleGroup
+.
+
+sz:member_of rdfs:domain sz:Person ;
+  rdfs:range sz:Organization ;
+  skos:definition "which people are members of which organizations?"@en ;
+  rdf:type sz:relation, org:memberOf
+.

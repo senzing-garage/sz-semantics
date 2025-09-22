@@ -1,0 +1,620 @@
+[
+    {
+        "RESOLVED_ENTITY": {
+            "ENTITY_ID": 1,
+            "ENTITY_NAME": "Robert Smith",
+            "RECORDS": [
+                {
+                    "DATA_SOURCE": "CUSTOMERS",
+                    "RECORD_ID": "1004",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 4,
+                    "ENTITY_KEY": "27EB831065949BD567D1E92681CA4ACD8C0FF1AA",
+                    "ENTITY_DESC": "B Smith",
+                    "MATCH_KEY": "",
+                    "MATCH_LEVEL": 0,
+                    "MATCH_LEVEL_CODE": "",
+                    "ERRULE_CODE": "",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.863",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith B"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "DOB: 11/12/1979",
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "EMAIL: bsmith@work.com"
+                    ],
+                    "ADDRESS_DATA": [
+                        "HOME: 1515 Adela Ln Las Vegas NV 89132"
+                    ],
+                    "PHONE_DATA": [],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "DATE: 1/5/15",
+                        "STATUS: Inactive",
+                        "AMOUNT: 400"
+                    ]
+                },
+                {
+                    "DATA_SOURCE": "CUSTOMERS",
+                    "RECORD_ID": "1001",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 1,
+                    "ENTITY_KEY": "53C913F04DF04CA474389042F731333F92DCD3E7",
+                    "ENTITY_DESC": "Robert Smith",
+                    "MATCH_KEY": "+NAME+DOB+PHONE+EMAIL",
+                    "MATCH_LEVEL": 1,
+                    "MATCH_LEVEL_CODE": "RESOLVED",
+                    "ERRULE_CODE": "SF1_SNAME_CFF_CSTAB",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.848",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Robert"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "DOB: 12/11/1978",
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "EMAIL: bsmith@work.com"
+                    ],
+                    "ADDRESS_DATA": [
+                        "MAILING: 123 Main Street, Las Vegas NV 89132"
+                    ],
+                    "PHONE_DATA": [
+                        "HOME: 702-919-1300"
+                    ],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "DATE: 1/2/18",
+                        "STATUS: Active",
+                        "AMOUNT: 100"
+                    ]
+                },
+                {
+                    "DATA_SOURCE": "CUSTOMERS",
+                    "RECORD_ID": "1002",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 2,
+                    "ENTITY_KEY": "E417012A90D71444C2E190FAF313DA88C5E663B9",
+                    "ENTITY_DESC": "Bob Smith",
+                    "MATCH_KEY": "+NAME+DOB+ADDRESS",
+                    "MATCH_LEVEL": 1,
+                    "MATCH_LEVEL_CODE": "RESOLVED",
+                    "ERRULE_CODE": "CNAME_CFF_CEXCL",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.853",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Bob"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "DOB: 11/12/1978",
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [],
+                    "ADDRESS_DATA": [
+                        "HOME: 1515 Adela Lane Las Vegas NV 89111"
+                    ],
+                    "PHONE_DATA": [
+                        "MOBILE: 702-919-1300"
+                    ],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "DATE: 3/10/17",
+                        "STATUS: Inactive",
+                        "AMOUNT: 200"
+                    ]
+                },
+                {
+                    "DATA_SOURCE": "CUSTOMERS",
+                    "RECORD_ID": "1003",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 3,
+                    "ENTITY_KEY": "B327B02717D7515EC96319C0A0AD680FE532E27E",
+                    "ENTITY_DESC": "Bob J Smith",
+                    "MATCH_KEY": "+NAME+DOB+EMAIL",
+                    "MATCH_LEVEL": 1,
+                    "MATCH_LEVEL_CODE": "RESOLVED",
+                    "ERRULE_CODE": "SF1_PNAME_CSTAB",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.860",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Bob J"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "DOB: 12/11/1978",
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "EMAIL: bsmith@work.com"
+                    ],
+                    "ADDRESS_DATA": [],
+                    "PHONE_DATA": [],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "DATE: 4/9/16",
+                        "STATUS: Inactive",
+                        "AMOUNT: 300"
+                    ]
+                }
+            ]
+        },
+        "RELATED_ENTITIES": [
+            {
+                "ENTITY_ID": 5,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
+                "ENTITY_NAME": "Robert E Smith Sr",
+                "RECORD_SUMMARY": [
+                    {
+                        "DATA_SOURCE": "CUSTOMERS",
+                        "RECORD_COUNT": 1,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:45.866",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:45.866"
+                    },
+                    {
+                        "DATA_SOURCE": "WATCHLIST",
+                        "RECORD_COUNT": 1,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:55.338",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+                    }
+                ],
+                "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+            },
+            {
+                "ENTITY_ID": 100003,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME",
+                "ERRULE_CODE": "CNAME",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
+                "ENTITY_NAME": "Robert Smith",
+                "RECORD_SUMMARY": [
+                    {
+                        "DATA_SOURCE": "WATCHLIST",
+                        "RECORD_COUNT": 1,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:55.355",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                    }
+                ],
+                "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+            },
+            {
+                "ENTITY_ID": 100002,
+                "MATCH_LEVEL": 3,
+                "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
+                "MATCH_KEY": "+ADDRESS+SURNAME",
+                "ERRULE_CODE": "CFF_SURNAME",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
+                "ENTITY_NAME": "Patricia Smith",
+                "RECORD_SUMMARY": [
+                    {
+                        "DATA_SOURCE": "WATCHLIST",
+                        "RECORD_COUNT": 1,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:55.352",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:55.352"
+                    }
+                ],
+                "LAST_SEEN_DT": "2025-09-02 18:30:55.352"
+            }
+        ]
+    },
+    {
+        "ENTITY_PATHS": [],
+        "ENTITIES": [
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 1,
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "CUSTOMERS",
+                            "RECORD_COUNT": 4,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:45.848",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100002,
+                        "MATCH_LEVEL": 3,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
+                        "MATCH_KEY": "+ADDRESS+SURNAME",
+                        "ERRULE_CODE": "CFF_SURNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 5,
+                    "ENTITY_NAME": "Robert E Smith Sr",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "CUSTOMERS",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:45.866",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:45.866"
+                        },
+                        {
+                            "DATA_SOURCE": "WATCHLIST",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:55.338",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 100002,
+                    "ENTITY_NAME": "Patricia Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "WATCHLIST",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:55.352",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:55.352"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.352"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 29,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 30,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 3,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
+                        "MATCH_KEY": "+ADDRESS+SURNAME",
+                        "ERRULE_CODE": "CFF_SURNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 100003,
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "WATCHLIST",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:55.355",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "RESOLVED_ENTITY": {
+            "ENTITY_ID": 5,
+            "ENTITY_NAME": "Robert E Smith Sr",
+            "RECORDS": [
+                {
+                    "DATA_SOURCE": "CUSTOMERS",
+                    "RECORD_ID": "1005",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 5,
+                    "ENTITY_KEY": "A717535F7B34769564921B97098083BB2849D6AA",
+                    "ENTITY_DESC": "Robbie Smith",
+                    "MATCH_KEY": "",
+                    "MATCH_LEVEL": 0,
+                    "MATCH_LEVEL_CODE": "",
+                    "ERRULE_CODE": "",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.866",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Robbie"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "DRLIC: 112233 NV"
+                    ],
+                    "ADDRESS_DATA": [
+                        "MAILING: 123 E Main St Henderson NV 89132"
+                    ],
+                    "PHONE_DATA": [],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "DATE: 7/16/19",
+                        "STATUS: Active",
+                        "AMOUNT: 500"
+                    ]
+                },
+                {
+                    "DATA_SOURCE": "WATCHLIST",
+                    "RECORD_ID": "1006",
+                    "ENTITY_TYPE": "GENERIC",
+                    "INTERNAL_ID": 100001,
+                    "ENTITY_KEY": "62345BA40FF4BEC4F7A10E466D64187BB687B643",
+                    "ENTITY_DESC": "Robert E Smith Sr",
+                    "MATCH_KEY": "+NAME+DRLIC",
+                    "MATCH_LEVEL": 1,
+                    "MATCH_LEVEL_CODE": "RESOLVED",
+                    "ERRULE_CODE": "SF1_CNAME",
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.338",
+                    "NAME_DATA": [
+                        "PRIMARY: Smith Sr Robert E"
+                    ],
+                    "ATTRIBUTE_DATA": [
+                        "DOB: 3/31/1954",
+                        "RECORD_TYPE: PERSON"
+                    ],
+                    "IDENTIFIER_DATA": [
+                        "DRLIC: 112233 NV"
+                    ],
+                    "ADDRESS_DATA": [
+                        "MAILING: 123 Main St, Las Vegas"
+                    ],
+                    "PHONE_DATA": [],
+                    "RELATIONSHIP_DATA": [],
+                    "ENTITY_DATA": [],
+                    "OTHER_DATA": [
+                        "STATUS: Active",
+                        "DATE: 1/3/17",
+                        "CATEGORY: Fraud"
+                    ]
+                }
+            ]
+        },
+        "RELATED_ENTITIES": [
+            {
+                "ENTITY_ID": 1,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
+                "ENTITY_NAME": "Robert Smith",
+                "RECORD_SUMMARY": [
+                    {
+                        "DATA_SOURCE": "CUSTOMERS",
+                        "RECORD_COUNT": 4,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:45.848",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+                    }
+                ],
+                "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+            },
+            {
+                "ENTITY_ID": 100003,
+                "MATCH_LEVEL": 2,
+                "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                "MATCH_KEY": "+NAME",
+                "ERRULE_CODE": "CNAME",
+                "IS_DISCLOSED": 0,
+                "IS_AMBIGUOUS": 0,
+                "ENTITY_NAME": "Robert Smith",
+                "RECORD_SUMMARY": [
+                    {
+                        "DATA_SOURCE": "WATCHLIST",
+                        "RECORD_COUNT": 1,
+                        "FIRST_SEEN_DT": "2025-09-02 18:30:55.355",
+                        "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                    }
+                ],
+                "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+            }
+        ]
+    },
+    {
+        "ENTITY_PATHS": [],
+        "ENTITIES": [
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 1,
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "CUSTOMERS",
+                            "RECORD_COUNT": 4,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:45.848",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:45.863"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100002,
+                        "MATCH_LEVEL": 3,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_RELATED",
+                        "MATCH_KEY": "+ADDRESS+SURNAME",
+                        "ERRULE_CODE": "CFF_SURNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 5,
+                    "ENTITY_NAME": "Robert E Smith Sr",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "CUSTOMERS",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:45.866",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:45.866"
+                        },
+                        {
+                            "DATA_SOURCE": "WATCHLIST",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:55.338",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.338"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME+ADDRESS-DOB",
+                        "ERRULE_CODE": "CNAME_CFF_DEXCL",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 100003,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            },
+            {
+                "RESOLVED_ENTITY": {
+                    "ENTITY_ID": 100003,
+                    "ENTITY_NAME": "Robert Smith",
+                    "RECORD_SUMMARY": [
+                        {
+                            "DATA_SOURCE": "WATCHLIST",
+                            "RECORD_COUNT": 1,
+                            "FIRST_SEEN_DT": "2025-09-02 18:30:55.355",
+                            "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                        }
+                    ],
+                    "LAST_SEEN_DT": "2025-09-02 18:30:55.355"
+                },
+                "RELATED_ENTITIES": [
+                    {
+                        "ENTITY_ID": 1,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    },
+                    {
+                        "ENTITY_ID": 5,
+                        "MATCH_LEVEL": 2,
+                        "MATCH_LEVEL_CODE": "POSSIBLY_SAME",
+                        "MATCH_KEY": "+NAME",
+                        "ERRULE_CODE": "CNAME",
+                        "IS_DISCLOSED": 0,
+                        "IS_AMBIGUOUS": 0
+                    }
+                ]
+            }
+        ]
+    }
+]

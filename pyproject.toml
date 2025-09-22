@@ -10,7 +10,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-version = "1.0.1"
+version = "1.0.2"
 requires-python = ">=3.11"
 
 dependencies = [
@@ -53,8 +53,9 @@ keywords = [
 
 [project.urls]
 
-homepage = "https://pypi.org/project/sz_semantics/"
-package = "https://github.com/senzing-garage/sz-semantics"
+homepage = "https://github.com/senzing-garage/sz-semantics"
+package = "https://pypi.org/project/sz_semantics/"
+semantics = "https://github.com/senzing-garage/sz-semantics/wiki/ns"
 
 
 [tool.poetry]

@@ -14,6 +14,8 @@ import pathlib
 import re
 import typing
 
+from .util import KeyValueStore
+
 
 class Mask:
     """
@@ -83,14 +85,13 @@ substituted back later.
     def __init__ (
         self,
         *,
-        token_store: typing.Dict[ str, str ] | None = None
+        kv_store: KeyValueStore = KeyValueStore(),
         ) -> None:
         """
 Constructor.
 
-The `tokens` dictionary can be replaced for larger scale
-such as [`rocksdict`](https://github.com/rocksdict/rocksdict)
-by providing an optional `token_store` parameter.
+Override `KeyValueStore` to replace the Python built-in `dict` for
+larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
 
 Add values to `KNOWN_KEYS` and `MASKED_KEYS` as needed for
 a given use case.
@@ -98,10 +99,7 @@ a given use case.
         self.logger = logging.getLogger(__name__)
         self.key_count: Counter = Counter()
 
-        if token_store is None:
-            token_store = {}
-
-        self.tokens: typing.Dict[ str, str ] = token_store
+        self.tokens: typing.Dict[ str, str ] = kv_store.allocate()
 
 
     def serialize_json (

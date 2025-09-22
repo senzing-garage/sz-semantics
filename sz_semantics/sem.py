@@ -18,6 +18,8 @@ from rdflib.namespace import DCTERMS, RDF, ORG, SKOS
 import networkx as nx
 import rdflib
 
+from .util import KeyValueStore
+
 
 class SzVocab (StrEnum):
     """
@@ -52,16 +54,21 @@ vocabulary, taxonomy, thesaurus, and ontology.
         self,
         *,
         domain_path: pathlib.Path = pathlib.Path("domain.ttl"),
+        kv_store: KeyValueStore = KeyValueStore(),
         ) -> None:
         """
 Constructor.
+
+Override `KeyValueStore` to replace the Python built-in `dict` for
+larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
         """
         self.logger = logging.getLogger(__name__)
+        self.kv_store: KeyValueStore = kv_store
 
         self.use_lemmas: bool = False
         self.known_lemma: typing.List[ str ] = []
 
-        self.taxo_node: typing.Dict[ str, int ] = {}
+        self.taxo_node: typing.Dict[ str, int ] = self.kv_store.allocate()
         self.sem_layer: nx.MultiDiGraph = nx.MultiDiGraph()
 
         self.rdf_graph: rdflib.Graph = rdflib.Graph()
@@ -341,8 +348,8 @@ Populate a semantic layer node from an ER entity.
 Iterate through the `skos:Concept` entities, loading them into
 the `NetworkX` property graph to initialize a semantic layer.
         """
-        node_map: typing.Dict[ str, int ] = {}
-        attr_map: typing.Dict[ int, dict ] = {}
+        node_map: typing.Dict[ str, int ] = self.kv_store.allocate()
+        attr_map: typing.Dict[ int, dict ] = self.kv_store.allocate()
 
         # pass 1: populate nodes for the `skos:Concept` entities into
         # the `NetworkX` property graph
@@ -495,11 +502,11 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
             """
         ]
 
-        org_map: typing.Dict[ str, str ] = {}
-        parent: typing.Dict[ str, str ] = {}
+        org_map: typing.Dict[ str, str ] = self.kv_store.allocate()
+        parent: typing.Dict[ str, str ] = self.kv_store.allocate()
 
         # load the data records
-        data_records: typing.Dict[ str, dict ] = {}
+        data_records: typing.Dict[ str, dict ] = self.kv_store.allocate()
 
         for filename in datasets:
             data_path: pathlib.Path = pathlib.Path(filename)
@@ -639,7 +646,7 @@ Be sure to call `parse_er_export()` beforehand.
         """
         # load the ER triples into their own graph, to extract and
         # link the known synonyms in the thesaurus
-        node_map: typing.Dict[ str, int ] = {}
+        node_map: typing.Dict[ str, int ] = self.kv_store.allocate()
         er_graph: rdflib.Graph = rdflib.Graph()
 
         er_graph.parse(

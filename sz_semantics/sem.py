@@ -171,7 +171,7 @@ entity. Otherwise provide a mocked value.
         ) -> typing.List[ str ]:
         """
 Iterate through `skos:Concept` entities to extract the labels used for
-zero-shot NER.
+zero-shot NER such as the `GLiNER` library.
         """
         return [
             label.toPython()  # type: ignore
@@ -186,6 +186,9 @@ zero-shot NER.
         """
 Iterate through `skos:Concept` entities to extract a mapping between
 NER labels and abbreviated IRIs.
+
+Used for _entity linking_ when using zero-shot NER such as the `GLiNER`
+library.
         """
         return {
             label.toPython(): concept_iri.n3(self.rdf_graph.namespace_manager)  # type: ignore
@@ -475,6 +478,103 @@ Extract the name and optional employer from a data record.
         return self.scrub_name(name), employer, urls
 
 
+    def parse_sz_entity (
+        self,
+        data_records: typing.Dict[ str, dict ],
+        data: dict,
+        org_map: typing.Dict[ str, str ],
+        parents: typing.Dict[ str, str ],
+        *,
+        language: str = "en",
+        debug: bool = False,
+        ) -> str:
+        """
+Transform a Senzing entity, parsed from JSON, into RDF representation.
+        """
+        if debug:
+            log_msg: str = f"jsonl: {data}"
+            self.logger.debug(log_msg)
+
+        entity_id: str = self.SZ_PREFIX + str(data["RESOLVED_ENTITY"]["ENTITY_ID"])
+        ent_descrip: str = ""
+        ent_type: str = ""
+
+        # parse the resolved data records
+        rec_list: typing.List[ dict ] = []
+
+        for rec in data["RESOLVED_ENTITY"]["RECORDS"]:
+            ent_descrip = rec["ENTITY_DESC"]
+
+            record_id = rec["RECORD_ID"]
+            data_source: str = rec["DATA_SOURCE"].replace(" ", "_").lower()
+            rec_iri: str = f"{self.SZ_PREFIX}{data_source}_{record_id}"
+            parents[rec_iri] = entity_id
+
+            pred_iri: str = "skos:exactMatch"
+
+            rec_list.append({
+                "pred": pred_iri,
+                "obj": rec_iri,
+                "skos:prefLabel": self.scrub_name(rec["ENTITY_DESC"]),
+            })
+
+        # parse the related entities
+        rel_list: typing.List[ dict ] = []
+
+        for rel in data["RELATED_ENTITIES"]:
+            match_key: str = rel["MATCH_KEY"]
+            match_level: int = rel["MATCH_LEVEL"]
+            match_code: str = rel["MATCH_LEVEL_CODE"]
+
+            why: str = f"{match_key} {match_level}"
+            pred_iri = "skos:related"
+
+            if match_code == "POSSIBLY_SAME":
+                pred_iri = "skos:closeMatch"
+
+            rel_list.append({
+                "pred": pred_iri,
+                "obj": self.SZ_PREFIX + str(rel["ENTITY_ID"]),
+                "skos:definition": why,
+            })
+
+        # collect the entity metadata
+        ent_descrip = self.scrub_name(ent_descrip)
+
+        ent_node: dict = {
+            "iri": entity_id,
+            "skos:prefLabel": ent_descrip,
+        }
+
+        if debug:
+            log_msg = f"ent: {ent_node}"
+            self.logger.debug(log_msg)
+
+        # generate the RDF represenation for this entity 
+        rdf_frag: str = f"\n{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
+
+        if self.use_lemmas:
+            lemma_key: str = self.lemmatize(ent_descrip)
+            rdf_frag += f";\n  sz:lemma_phrase \"{lemma_key}\"@{language} "
+
+        if len(data_records) > 0:
+            for rec_node in rec_list:
+                dat_rec: dict = data_records[rec_node["obj"]]
+                ent_type = dat_rec["RECORD_TYPE"]
+                rdf_frag += f';\n  {rec_node["pred"]} {rec_node["obj"]} '
+
+                if ent_type == "ORGANIZATION":
+                    org_map[rec_node["skos:prefLabel"]] = entity_id
+
+            for rel_node in rel_list:
+                rdf_frag += f';\n  {rel_node["pred"]} {rel_node["obj"]} '
+
+        rdf_frag += f";\n  rdf:type sz:{ent_type.capitalize()} "
+        rdf_frag += "\n.\n"
+
+        return rdf_frag
+
+
     def parse_er_export (  # pylint: disable=R0912,R0913,R0914,R0915
         self,
         datasets: typing.List[ str ],
@@ -492,7 +592,20 @@ metadata for data records as nodes in the resulting graph.
 Then parse the Senzing entity resolution (ER) results exported as JSON.
         """
         org_map: typing.Dict[ str, str ] = self.kv_store.allocate()
-        parent: typing.Dict[ str, str ] = self.kv_store.allocate()
+        parents: typing.Dict[ str, str ] = self.kv_store.allocate()
+
+        # prepare to serialize the generated RDF file
+        rdf_frag: str = """
+@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
+
+@prefix dc:    <http://purl.org/dc/terms/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+        """
+
+        rdf_fp: io.TextIOWrapper = open(er_path, "w", encoding = encoding)  # pylint: disable=R1732
+        rdf_fp.write(rdf_frag)
 
         # load the data records
         data_records: typing.Dict[ str, dict ] = self.kv_store.allocate()
@@ -506,100 +619,21 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     record_id: str = self.SZ_PREFIX + rec["DATA_SOURCE"].replace(" ", "_").lower() + "_" + rec["RECORD_ID"]  # pylint: disable=C0301
                     data_records[record_id] = rec
 
-        # serialize the generated RDF file
-        rdf_frag: str = """
-@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
-
-@prefix dc:    <http://purl.org/dc/terms/> .
-@prefix org:   <http://www.w3.org/ns/org#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-            """
-
-        rdf_fp: io.TextIOWrapper = open(er_path, "w", encoding = encoding)  # pylint: disable=R1732
-        rdf_fp.write(rdf_frag)
-
         # parse the JSON export
         with open(export_path, encoding = encoding) as fp:
             for line in fp:
                 data: dict = json.loads(line)
 
-                if debug:
-                    log_msg: str = f"jsonl: {data}"
-                    self.logger.debug(log_msg)
+                rdf_frag = self.parse_sz_entity(
+                    data_records,
+                    data,
+                    org_map,
+                    parents,
+                    language = language,
+                    debug = debug,
+                )
 
-                entity_id: str = self.SZ_PREFIX + str(data["RESOLVED_ENTITY"]["ENTITY_ID"])
-                ent_descrip: str = ""
-                ent_type: str = ""
-
-                rec_list: typing.List[ dict ] = []
-                rel_list: typing.List[ dict ] = []
-
-                for rec in data["RESOLVED_ENTITY"]["RECORDS"]:
-                    ent_descrip = rec["ENTITY_DESC"]
-
-                    record_id = rec["RECORD_ID"]
-                    data_source: str = rec["DATA_SOURCE"].replace(" ", "_").lower()
-                    rec_iri: str = f"{self.SZ_PREFIX}{data_source}_{record_id}"
-                    parent[rec_iri] = entity_id
-
-                    pred_iri: str = "skos:exactMatch"
-
-                    rec_list.append({
-                        "pred": pred_iri,
-                        "obj": rec_iri,
-                        "skos:prefLabel": self.scrub_name(rec["ENTITY_DESC"]),
-                    })
-
-                for rel in data["RELATED_ENTITIES"]:
-                    match_key: str = rel["MATCH_KEY"]
-                    match_level: int = rel["MATCH_LEVEL"]
-                    match_code: str = rel["MATCH_LEVEL_CODE"]
-
-                    why: str = f"{match_key} {match_level}"
-                    pred_iri = "skos:related"
-
-                    if match_code == "POSSIBLY_SAME":
-                        pred_iri = "skos:closeMatch"
-
-                    rel_list.append({
-                        "pred": pred_iri,
-                        "obj": self.SZ_PREFIX + str(rel["ENTITY_ID"]),
-                        "skos:definition": why,
-                    })
-
-                ent_descrip = self.scrub_name(ent_descrip)
-
-                ent_node: dict = {
-                    "iri": entity_id,
-                    "skos:prefLabel": ent_descrip,
-                }
-
-                if debug:
-                    log_msg = f"ent: {ent_node}"
-                    self.logger.debug(log_msg)
-
-                rdf_frag = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
-
-                if self.use_lemmas:
-                    lemma_key: str = self.lemmatize(ent_descrip)
-                    rdf_frag += f";\n  sz:lemma_phrase \"{lemma_key}\"@{language} "
-
-                if len(data_records) > 0:
-                    for rec_node in rec_list:
-                        dat_rec: dict = data_records[rec_node["obj"]]
-                        ent_type = dat_rec["RECORD_TYPE"]
-                        rdf_frag += f';\n  {rec_node["pred"]} {rec_node["obj"]} '
-
-                        if ent_type == "ORGANIZATION":
-                            org_map[rec_node["skos:prefLabel"]] = entity_id
-
-                    for rel_node in rel_list:
-                        rdf_frag += f';\n  {rel_node["pred"]} {rel_node["obj"]} '
-
-                    rdf_frag += f";\n  rdf:type sz:{ent_type.capitalize()} "
-                    rdf_frag += "\n.\n"
-                    rdf_fp.write(rdf_frag)
+                rdf_fp.write(rdf_frag)
 
         # add nodes representing the data records into the RDF graph
         for record_id, rec in data_records.items():
@@ -620,7 +654,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
             rdf_fp.write(rdf_frag)
 
             if len(employer) > 0:
-                rdf_frag = f"{parent[record_id]} org:memberOf {employer} .\n"
+                rdf_frag = f"{parents[record_id]} org:memberOf {employer} .\n"
                 rdf_fp.write(rdf_frag)
 
         # load the RDF graph and initialize the semantic layer

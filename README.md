@@ -102,6 +102,9 @@ python3 demo2.py
 Check the generated RDF in `thesaurus.ttl` and the resulting property
 graph in the `sem.json` node-link format file.
 
+**Note:** this portion is a work-in-progress, currently refactoring
+toward a more scalable approach for streaming updates.
+
 
 ---
 

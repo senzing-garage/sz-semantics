@@ -259,6 +259,35 @@ Populate a `NetworkX` node in the semantic layer from a
         return node_id, lemma_key, attrs
 
 
+    def add_sem_relations (
+        self,
+        er_graph: rdflib.Graph,
+        node_map: typing.Dict[ str, int ],
+        entity_iri: rdflib.term.Node,
+        ) -> None:
+        """
+Add the semantic relations among nodes in the semantic layer.
+        """
+        for sem_rel in [ SKOS.related, SKOS.closeMatch, SKOS.exactMatch, ORG.memberOf ]:
+            for obj in er_graph.objects(entity_iri, sem_rel):
+                src_id: int = node_map[entity_iri.n3(er_graph.namespace_manager)]
+                dst_id: int = node_map[obj.n3(er_graph.namespace_manager)]
+
+                if src_id != dst_id:
+                    rel_iri: str = sem_rel.n3(er_graph.namespace_manager)
+                    prob: float = 0.5
+
+                    if rel_iri in [ "skos:exactMatch", "org:memberOf" ]:
+                        prob = 1.0
+
+                    self.sem_layer.add_edge(
+                        src_id,
+                        dst_id,
+                        key = rel_iri,
+                        prob = prob,
+                    )
+
+
     def populate_er_node (
         self,
         er_graph: rdflib.Graph,
@@ -559,7 +588,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     for rel_node in rel_list:
                         rdf_frag += f';\n  {rel_node["pred"]} {rel_node["obj"]} '
 
-                    rdf_frag += f";\n  rdf:type sz:SzEntity, sz:{ent_type.capitalize()} "
+                    rdf_frag += f";\n  rdf:type sz:{ent_type.capitalize()} "
                     rdf_frag += "\n."
                     rdf_list.append(rdf_frag)
 
@@ -626,34 +655,21 @@ Be sure to call `parse_er_export()` beforehand.
 
         # now iterate through the entities, overriding any prior lemma
         # keys from data records
-        for entity_iri in er_graph.subjects(RDF.type, self.form_concept("SzEntity")):
-            node_id = self.populate_er_node(er_graph, entity_iri)
-            node_map[entity_iri.n3(er_graph.namespace_manager)] = node_id
+        for concept in [ "Person", "Organization" ]:
+            for entity_iri in er_graph.subjects(RDF.type, self.form_concept(concept)):
+                node_id = self.populate_er_node(er_graph, entity_iri)
+                node_map[entity_iri.n3(er_graph.namespace_manager)] = node_id
 
         # then add SKOS relations (thesaurus synonyms and taxonymy)
         # as edges in the semantic layer
-        for entity_iri in er_graph.subjects(RDF.type, self.form_concept("SzEntity")):
-            for sem_rel in [ SKOS.related, SKOS.closeMatch, SKOS.exactMatch, ORG.memberOf ]:
-                for obj in er_graph.objects(entity_iri, sem_rel):
-                    src_id: int = node_map[entity_iri.n3(er_graph.namespace_manager)]
-                    dst_id: int = node_map[obj.n3(er_graph.namespace_manager)]
-
-                    if src_id != dst_id:
-                        rel_iri: str = sem_rel.n3(er_graph.namespace_manager)
-                        prob: float = 0.5
-
-                        if rel_iri in [ "skos:exactMatch", "org:memberOf" ]:
-                            prob = 1.0
-
-                        self.sem_layer.add_edge(
-                            src_id,
-                            dst_id,
-                            key = rel_iri,
-                            prob = prob,
-                        )
+        for concept in [ "Person", "Organization" ]:
+            for entity_iri in er_graph.subjects(RDF.type, self.form_concept(concept)):
+                self.add_sem_relations(er_graph, node_map, entity_iri)
 
         # also link entities to their taxonomy nodes
-        for taxo_iri in [ self.form_concept("Organization"), self.form_concept("Person") ]:
+        for concept in [ "Person", "Organization" ]:
+            taxo_iri: rdflib.term.Node = self.form_concept(concept)
+
             for entity_iri in er_graph.subjects(RDF.type, taxo_iri):
                 node_id = node_map[entity_iri.n3(er_graph.namespace_manager)]
                 taxo_node_id: int = self.taxo_node[taxo_iri.n3(self.rdf_graph.namespace_manager)]

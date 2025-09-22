@@ -58,8 +58,9 @@ provide a distributed key/value store (other than the Python built-in
 
 ## Usage: Semantic Represenation
 
-Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/),
-parse the Senzing [_entity resolution_](https://senzing.com/what-is-entity-resolution/)
+Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/)
+in the `domain.ttl` file, parse the Senzing
+[_entity resolution_](https://senzing.com/what-is-entity-resolution/)
 (ER) results to generate an 
 [`RDFlib`](https://rdflib.readthedocs.io/) _semantic graph_
 then transform this into a 
@@ -100,6 +101,9 @@ python3 demo2.py
 
 Check the generated RDF in `thesaurus.ttl` and the resulting property
 graph in the `sem.json` node-link format file.
+
+**Note:** this portion is a work-in-progress, currently refactoring
+toward a more scalable approach for streaming updates.
 
 
 ---

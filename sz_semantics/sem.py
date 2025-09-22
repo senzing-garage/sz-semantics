@@ -8,12 +8,12 @@ see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
 from enum import StrEnum
+import io
 import json
 import logging
 import pathlib
 import typing
 
-from icecream import ic
 from rdflib.namespace import DCTERMS, RDF, ORG, SKOS
 import networkx as nx
 import rdflib
@@ -196,7 +196,7 @@ NER labels and abbreviated IRIs.
 
     def populate_taxo_node (
         self,
-        concept_iri: rdflib.term.URIRef,
+        concept_iri: rdflib.term.Node,
         ) -> typing.Tuple[ int, str, dict ]:
         """
 Populate a `NetworkX` node in the semantic layer from a
@@ -309,14 +309,14 @@ Populate a semantic layer node from an ER entity.
             lemma_key: str = self.get_first_lemma(entity_iri)
             lemmas: typing.List[ str ] = [ lemma_key ]
         else:
-            lemma_phrase_iri: rdflib.term.URIRef = self.rel_iri(StrwVocab.LEMMA_PHRASE)
+            lemma_phrase_iri: rdflib.term.URIRef = self.rel_iri(SzVocab.LEMMA_PHRASE)
 
-            lemmas: typing.List[ str ] = [
+            lemmas = [
                 lemma.toPython()  # type: ignore
                 for lemma in er_graph.objects(entity_iri, lemma_phrase_iri)
             ]
 
-            lemma_key: str = lemmas[0]
+            lemma_key = lemmas[0]
 
         self.add_lemma(lemma_key)
         node_id: int = self.get_lemma_index(lemma_key)
@@ -343,7 +343,7 @@ Populate a semantic layer node from an ER entity.
 
     def seed_sem_layer (
         self,
-        ) -> nx.MultiDiGraph():
+        ) -> None:
         """
 Iterate through the `skos:Concept` entities, loading them into
 the `NetworkX` property graph to initialize a semantic layer.
@@ -386,7 +386,7 @@ Scrub disallowed characters from a name going into an RDF language property.
         return name.replace('"', "'").strip()
 
 
-    def get_name (
+    def get_name (  # pylint: disable=R0912,R0915
         self,
         record_id: str,
         rec_type: str,
@@ -405,18 +405,18 @@ Extract the name and optional employer from a data record.
                 names: dict = rec["NAMES"][0]
 
                 if "PRIMARY_NAME_ORG" in names:
-                    name = names.get("PRIMARY_NAME_ORG").strip()
+                    name = names.get("PRIMARY_NAME_ORG").strip()  # type: ignore
                 elif "NAME_ORG" in names:
-                    name = names.get("NAME_ORG").strip()
+                    name = names.get("NAME_ORG").strip()  # type: ignore
                 else:
                     log_msg = f"No name item? {names}"
                     self.logger.error(log_msg)
 
             elif "PRIMARY_NAME_ORG" in rec:
-                name = rec.get("PRIMARY_NAME_ORG").strip()
+                name = rec.get("PRIMARY_NAME_ORG").strip()  # type: ignore
 
             else:
-                log_msg: str = f"No name? {rec}"
+                log_msg = f"No name? {rec}"
                 self.logger.warning(log_msg)
 
             # other metadata
@@ -430,34 +430,34 @@ Extract the name and optional employer from a data record.
 
         else:
             if "PRIMARY_NAME_FULL" in rec:
-                name = rec.get("PRIMARY_NAME_FULL").strip()
+                name = rec.get("PRIMARY_NAME_FULL").strip()  # type: ignore
 
             elif "PRIMARY_NAME_LAST" in rec:
-                name = rec.get("PRIMARY_NAME_LAST").strip()
+                name = rec.get("PRIMARY_NAME_LAST").strip()  # type: ignore
 
                 if "PRIMARY_NAME_MIDDLE" in rec:
-                    name = rec.get("PRIMARY_NAME_MIDDLE").strip() + " " + name
+                    name = rec.get("PRIMARY_NAME_MIDDLE").strip() + " " + name  # type: ignore
 
                 if "PRIMARY_NAME_FIRST" in rec:
-                    name = rec.get("PRIMARY_NAME_FIRST").strip() + " " + name
+                    name = rec.get("PRIMARY_NAME_FIRST").strip() + " " + name  # type: ignore
 
             elif "NAME_LAST" in rec:
-                name = rec.get("NAME_LAST").strip()
+                name = rec.get("NAME_LAST").strip()  # type: ignore
 
                 if "NAME_MIDDLE" in rec:
-                    name = rec.get("NAME_MIDDLE").strip() + " " + name
+                    name = rec.get("NAME_MIDDLE").strip() + " " + name  # type: ignore
 
                 if "NAME_FIRST" in rec:
-                    name = rec.get("NAME_FIRST").strip() + " " + name
+                    name = rec.get("NAME_FIRST").strip() + " " + name  # type: ignore
 
             elif "PRIMARY_NAME_FIRST" in rec:
-                name = rec.get("PRIMARY_NAME_FIRST").strip()
+                name = rec.get("PRIMARY_NAME_FIRST").strip()  # type: ignore
 
             elif "NATIVE_NAME_FULL" in rec:
-                name = rec.get("NATIVE_NAME_FULL").strip()
+                name = rec.get("NATIVE_NAME_FULL").strip()  # type: ignore
 
             else:
-                log_msg: str = f"No name? {rec}"
+                log_msg = f"No name? {rec}"
                 self.logger.warning(log_msg)
 
             # other metadata
@@ -491,17 +491,6 @@ metadata for data records as nodes in the resulting graph.
 
 Then parse the Senzing entity resolution (ER) results exported as JSON.
         """
-        rdf_list: typing.List[ str ] = [
-            """
-@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
-
-@prefix dc:    <http://purl.org/dc/terms/> .
-@prefix org:   <http://www.w3.org/ns/org#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-            """
-        ]
-
         org_map: typing.Dict[ str, str ] = self.kv_store.allocate()
         parent: typing.Dict[ str, str ] = self.kv_store.allocate()
 
@@ -516,6 +505,19 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     rec: dict = json.loads(line)
                     record_id: str = self.SZ_PREFIX + rec["DATA_SOURCE"].replace(" ", "_").lower() + "_" + rec["RECORD_ID"]  # pylint: disable=C0301
                     data_records[record_id] = rec
+
+        # serialize the generated RDF file
+        rdf_frag: str = """
+@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
+
+@prefix dc:    <http://purl.org/dc/terms/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+            """
+
+        rdf_fp: io.TextIOWrapper = open(er_path, "w", encoding = encoding)  # pylint: disable=R1732
+        rdf_fp.write(rdf_frag)
 
         # parse the JSON export
         with open(export_path, encoding = encoding) as fp:
@@ -577,7 +579,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     log_msg = f"ent: {ent_node}"
                     self.logger.debug(log_msg)
 
-                rdf_frag: str = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
+                rdf_frag = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
 
                 if self.use_lemmas:
                     lemma_key: str = self.lemmatize(ent_descrip)
@@ -596,8 +598,8 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                         rdf_frag += f';\n  {rel_node["pred"]} {rel_node["obj"]} '
 
                     rdf_frag += f";\n  rdf:type sz:{ent_type.capitalize()} "
-                    rdf_frag += "\n."
-                    rdf_list.append(rdf_frag)
+                    rdf_frag += "\n.\n"
+                    rdf_fp.write(rdf_frag)
 
         # add nodes representing the data records into the RDF graph
         for record_id, rec in data_records.items():
@@ -614,18 +616,16 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
             for url in urls:
                 rdf_frag += f";\n  dc:identifier <{url}> "
 
-            rdf_frag += "\n."
-            rdf_list.append(rdf_frag)
+            rdf_frag += "\n.\n"
+            rdf_fp.write(rdf_frag)
 
             if len(employer) > 0:
-                rdf_frag = f"{parent[record_id]} org:memberOf {employer} ."
-                rdf_list.append(rdf_frag)
-
-        # serialize the generated RDF file
-        with open(er_path, "w", encoding = encoding) as fp:
-            fp.write("\n".join(rdf_list))
+                rdf_frag = f"{parent[record_id]} org:memberOf {employer} .\n"
+                rdf_fp.write(rdf_frag)
 
         # load the RDF graph and initialize the semantic layer
+        rdf_fp.close()
+
         self.rdf_graph.parse(
             er_path.as_posix(),
             format = "turtle",

@@ -41,6 +41,20 @@ captures Senzing JSON output:
 python3 demo1.py data/get.json
 ```
 
+The two lists `Mask.KNOWN_KEYS` and `Mask.MASKED_KEYS` enumerate
+respectively the:
+
+  * keys for known elements which do not require masking
+  * keys for PII elements which require masking
+
+Any other keys encountered will be masked by default and reported as
+warnings in the logging. Adjust these lists as needed for a given use
+case.
+
+For work with large numbers of entities, subclass `KeyValueStore` to
+provide a distributed key/value store (other than the Python built-in
+`dict` default) to use for scale-out.
+
 
 ## Usage: Semantic Represenation
 
@@ -103,8 +117,8 @@ All materials herein are Copyright © 2025 Senzing, Inc.
 Kudos to 
 [@brianmacy](https://github.com/brianmacy),
 [@jbutcher21](https://github.com/jbutcher21),
-[@cj2001](https://github.com/cj2001),
 [@docktermj](https://github.com/docktermj),
+[@cj2001](https://github.com/cj2001),
 and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
 </details>
 

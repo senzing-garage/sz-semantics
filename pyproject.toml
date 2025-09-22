@@ -1,22 +1,60 @@
 [project]
 
 name = "sz_semantics"
-version = "1.0.0"
 description = "Transform JSON output from Senzing SDK for use with graph technologies, semantics, and downstream LLM integration"
 
 authors = [
     { name = "Paco Nathan", email = "paco@senzing.com" }
 ]
 
-license = { text = "MIT" }
 readme = "README.md"
+license = { text = "MIT" }
 
+version = "1.0.1"
 requires-python = ">=3.11"
 
 dependencies = [
     "rdflib (>=7.2.1,<8.0.0)",
     "networkx (>=3.5,<4.0)",
 ]
+
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Indexing",
+]
+
+keywords = [
+    "context-engineering",
+    "data-privacy",
+    "entity-resolution",
+    "entity-resolved-knowledge-graph",
+    "ontology",
+    "rdf",
+    "semantic-layer",
+    "semantics",
+    "skos",
+]
+
+
+[project.urls]
+
+homepage = "https://pypi.org/project/sz_semantics/"
+package = "https://github.com/senzing-garage/sz-semantics"
 
 
 [tool.poetry]
@@ -31,6 +69,13 @@ pylint = "^3.3.8"
 mypy = "^1.18.2"
 types-networkx = "^3.5.0.20250918"
 icecream = "^2.1.8"
+
+
+[tool.pytest.ini_options]
+
+pythonpath = [
+    "."
+]
 
 
 [build-system]

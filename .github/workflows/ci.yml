@@ -25,7 +25,7 @@ jobs:
 
       - id: cache-dependencies
         name: Cache dependencies
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/.venv
           key: ${{ matrix.os }}-${{ hashFiles('**/poetry.lock') }}

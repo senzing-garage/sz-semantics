@@ -21,19 +21,10 @@ if __name__ == "__main__":
     context: str = "truth" # "open" "strw"
 
     match context:
-        case "strw":
-            export_path: pathlib.Path = pathlib.Path("data/strw/export.json")
+        case "truth":
+            export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
 
             datasets: list = [
-                "data/strw/acme_biz.json",
-                "data/strw/corp_home.json",
-                "data/strw/orcid.json",
-                "data/strw/scopus.json",
-            ]
-        case "truth":
-            export_path = pathlib.Path("data/truth/export.json")
-
-            datasets = [
                 "data/truth/customers.json",
                 "data/truth/reference.json",
                 "data/truth/watchlist.json",
@@ -44,6 +35,15 @@ if __name__ == "__main__":
             datasets = [
                 "data/open/open-ownership.json",
                 "data/open/open-sanctions.json",
+            ]
+        case "strw":
+            export_path = pathlib.Path("data/strw/export.json")
+
+            datasets = [
+                "data/strw/acme_biz.json",
+                "data/strw/corp_home.json",
+                "data/strw/orcid.json",
+                "data/strw/scopus.json",
             ]
 
     ## load the Senzing entity resolution results into an `RDFlib`

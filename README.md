@@ -62,12 +62,11 @@ thes: Thesaurus = Thesaurus()
 
 thes.parse_er_export(
     [
-        "data/acme_biz.json",
-        "data/corp_home.json",
-        "data/orcid.json",
-        "data/scopus.json",
+        "data/truth/customers.json",
+        "data/truth/reference.json",
+        "data/truth/watchlist.json",
     ],
-    export_path = pathlib.Path("data/export.json"),
+    export_path = pathlib.Path("data/truth/export.json"),
     er_path = pathlib.Path("thesaurus.ttl"),
 )
 
@@ -100,3 +99,16 @@ which is succinct and simplifies use in commercial applications.
 
 All materials herein are Copyright © 2025 Senzing, Inc.
 </details>
+
+Kudos to 
+[@brianmacy](https://github.com/brianmacy),
+[@jbutcher21](https://github.com/jbutcher21),  
+[@cj2001](https://github.com/cj2001),
+[@docktermj](https://github.com/docktermj), 
+and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
+</details>
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=senzing-garage/sz-semantics&type=Date)](https://star-history.com/#senzing-garage/sz-semantics&Date)

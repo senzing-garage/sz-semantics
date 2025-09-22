@@ -8,6 +8,7 @@ see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
 from enum import StrEnum
+import io
 import json
 import logging
 import pathlib
@@ -490,17 +491,6 @@ metadata for data records as nodes in the resulting graph.
 
 Then parse the Senzing entity resolution (ER) results exported as JSON.
         """
-        rdf_list: typing.List[ str ] = [
-            """
-@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
-
-@prefix dc:    <http://purl.org/dc/terms/> .
-@prefix org:   <http://www.w3.org/ns/org#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-            """
-        ]
-
         org_map: typing.Dict[ str, str ] = self.kv_store.allocate()
         parent: typing.Dict[ str, str ] = self.kv_store.allocate()
 
@@ -515,6 +505,19 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     rec: dict = json.loads(line)
                     record_id: str = self.SZ_PREFIX + rec["DATA_SOURCE"].replace(" ", "_").lower() + "_" + rec["RECORD_ID"]  # pylint: disable=C0301
                     data_records[record_id] = rec
+
+        # serialize the generated RDF file
+        rdf_frag: str = """
+@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
+
+@prefix dc:    <http://purl.org/dc/terms/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+            """
+
+        rdf_fp: io.TextIOWrapper = open(er_path, "w", encoding = encoding)  # pylint: disable=R1732
+        rdf_fp.write(rdf_frag)
 
         # parse the JSON export
         with open(export_path, encoding = encoding) as fp:
@@ -576,7 +579,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                     log_msg = f"ent: {ent_node}"
                     self.logger.debug(log_msg)
 
-                rdf_frag: str = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
+                rdf_frag = f"{entity_id} skos:prefLabel \"{ent_descrip}\"@{language} "
 
                 if self.use_lemmas:
                     lemma_key: str = self.lemmatize(ent_descrip)
@@ -595,8 +598,8 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                         rdf_frag += f';\n  {rel_node["pred"]} {rel_node["obj"]} '
 
                     rdf_frag += f";\n  rdf:type sz:{ent_type.capitalize()} "
-                    rdf_frag += "\n."
-                    rdf_list.append(rdf_frag)
+                    rdf_frag += "\n.\n"
+                    rdf_fp.write(rdf_frag)
 
         # add nodes representing the data records into the RDF graph
         for record_id, rec in data_records.items():
@@ -613,18 +616,16 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
             for url in urls:
                 rdf_frag += f";\n  dc:identifier <{url}> "
 
-            rdf_frag += "\n."
-            rdf_list.append(rdf_frag)
+            rdf_frag += "\n.\n"
+            rdf_fp.write(rdf_frag)
 
             if len(employer) > 0:
-                rdf_frag = f"{parent[record_id]} org:memberOf {employer} ."
-                rdf_list.append(rdf_frag)
-
-        # serialize the generated RDF file
-        with open(er_path, "w", encoding = encoding) as fp:
-            fp.write("\n".join(rdf_list))
+                rdf_frag = f"{parent[record_id]} org:memberOf {employer} .\n"
+                rdf_fp.write(rdf_frag)
 
         # load the RDF graph and initialize the semantic layer
+        rdf_fp.close()
+
         self.rdf_graph.parse(
             er_path.as_posix(),
             format = "turtle",

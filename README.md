@@ -102,9 +102,9 @@ All materials herein are Copyright © 2025 Senzing, Inc.
 
 Kudos to 
 [@brianmacy](https://github.com/brianmacy),
-[@jbutcher21](https://github.com/jbutcher21),  
+[@jbutcher21](https://github.com/jbutcher21),
 [@cj2001](https://github.com/cj2001),
-[@docktermj](https://github.com/docktermj), 
+[@docktermj](https://github.com/docktermj),
 and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
 </details>
 

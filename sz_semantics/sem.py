@@ -651,7 +651,7 @@ Then parse the Senzing entity resolution (ER) results exported as JSON.
                 rdf_frag += f";\n  dc:identifier <{url}> "
 
             rdf_frag += "\n.\n"
-            rdf_fp.write(rdf_frag)
+            rdf_fp.write(rdf_frag)  # noqa
 
             if len(employer) > 0:
                 rdf_frag = f"{parents[record_id]} org:memberOf {employer} .\n"

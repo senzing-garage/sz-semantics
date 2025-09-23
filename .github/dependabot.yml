@@ -7,3 +7,4 @@ updates:
     directory: "/sz_semantics"
     schedule:
       interval: "daily"
+    open-pull-requests-limit: 0

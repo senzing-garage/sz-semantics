@@ -105,6 +105,9 @@ graph in the `sem.json` node-link format file.
 **Note:** this portion is a work-in-progress, currently refactoring
 toward a more scalable approach for streaming updates.
 
+---
+
+![](./assets/mask.png)
 
 ---
 

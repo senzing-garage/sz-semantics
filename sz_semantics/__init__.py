@@ -11,4 +11,6 @@ from .mask import Mask
 
 from .sem import NodeKind, SzVocab, Thesaurus
 
+from .sz import SzClient
+
 from .util import KeyValueStore

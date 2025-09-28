@@ -6,8 +6,25 @@ for use with graph technologies, semantics, and downstream LLM integration.
 
 ## Install
 
+This library uses [`poetry`](https://python-poetry.org/docs/) for
+demos:
+
+```bash
+poetry update
+```
+
+Otherwise, to use the library:
+
 ```bash
 pip install sz_sematics
+```
+
+For the [gRCP server](https://github.com/senzing-garage/serve-grpc), 
+if you don't already have Senzing and its gRPC server otherwise
+installed pull the latest Docker container:
+
+```bash
+docker pull senzing/serve-grpc:latest
 ```
 
 
@@ -38,7 +55,7 @@ For an example, run the `demo1.py` script with a data file which
 captures Senzing JSON output:
 
 ```bash
-python3 demo1.py data/get.json
+poetry run python3 demo1.py data/get.json
 ```
 
 The two lists `Mask.KNOWN_KEYS` and `Mask.MASKED_KEYS` enumerate
@@ -96,7 +113,7 @@ For an example, run the `demo2.py` script to process the JSON file
 `data/export.json` which captures Senzing ER exported results:
 
 ```bash
-python3 demo2.py
+poetry run python3 demo2.py
 ```
 
 Check the generated RDF in `thesaurus.ttl` and the resulting property
@@ -104,6 +121,27 @@ graph in the `sem.json` node-link format file.
 
 **Note:** this portion is a work-in-progress, currently refactoring
 toward a more scalable approach for streaming updates.
+
+
+## Usage: gRPC Client/Server
+
+For a demo of `SzClient` to simplify accessing the Senzing SDK via a
+gRPC server, then running _entity resolution_ on the "truthset"
+collection of sample datasets, first launch this container and have it
+running in the background:
+
+```bash
+docker run -it --publish 8261:8261 --rm senzing/serve-grpc
+```
+
+Then run:
+
+```bash
+poetry run python3 demo3.py
+```
+
+Restart the container each time before re-running the `demo3.py`
+script.
 
 ---
 

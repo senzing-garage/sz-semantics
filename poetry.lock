@@ -180,14 +180,14 @@ files = [
 
 [[package]]
 name = "isort"
-version = "6.0.1"
+version = "6.1.0"
 description = "A Python utility / library to sort Python imports."
 optional = false
 python-versions = ">=3.9.0"
 groups = ["dev"]
 files = [
-    {file = "isort-6.0.1-py3-none-any.whl", hash = "sha256:2dc5d7f65c9678d94c88dfc29161a320eec67328bc97aad576874cb4be1e9615"},
-    {file = "isort-6.0.1.tar.gz", hash = "sha256:1cb5df28dfbc742e490c5e41bad6da41b805b0a8be7bc93cd0fb2a8a890ac450"},
+    {file = "isort-6.1.0-py3-none-any.whl", hash = "sha256:58d8927ecce74e5087aef019f778d4081a3b6c98f15a80ba35782ca8a2097784"},
+    {file = "isort-6.1.0.tar.gz", hash = "sha256:9b8f96a14cfee0677e78e941ff62f03769a06d412aabb9e2a90487b3b7e8d481"},
 ]
 
 [package.extras]
@@ -621,26 +621,26 @@ files = [
 
 [[package]]
 name = "types-grpcio"
-version = "1.0.0.20250914"
+version = "1.0.0.20251001"
 description = "Typing stubs for grpcio"
 optional = false
 python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "types_grpcio-1.0.0.20250914-py3-none-any.whl", hash = "sha256:47253be85c5ef5ff5397c23a596cb6b657580cdd0814a7e3fc75d2aacb08aa60"},
-    {file = "types_grpcio-1.0.0.20250914.tar.gz", hash = "sha256:6b6f42bfd90e8c73d3969e04978e8cb07651cf877f447779d4003a307d213016"},
+    {file = "types_grpcio-1.0.0.20251001-py3-none-any.whl", hash = "sha256:7e7dc6e7238f1dc353adae2e172e8f4acd2388ad8935eba10d6a93dc58529148"},
+    {file = "types_grpcio-1.0.0.20251001.tar.gz", hash = "sha256:5334e2076b3ad621188af58b082ac7b31ea52f3e9a01cdd1984823bf63e7ce55"},
 ]
 
 [[package]]
 name = "types-networkx"
-version = "3.5.0.20250918"
+version = "3.5.0.20251001"
 description = "Typing stubs for networkx"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "types_networkx-3.5.0.20250918-py3-none-any.whl", hash = "sha256:c7d3951e747333a65c0fb3011461e2de990c7ed5b49f4292ffc0d3febc8e2536"},
-    {file = "types_networkx-3.5.0.20250918.tar.gz", hash = "sha256:346cc347fc7670b5db29af9d4ba5fa077507ad7100ed7a02707f74fbf317be3c"},
+    {file = "types_networkx-3.5.0.20251001-py3-none-any.whl", hash = "sha256:4bb9dd0378a52ca57d68f8215f8662e736d800a8ff892b457646eccd828a0230"},
+    {file = "types_networkx-3.5.0.20251001.tar.gz", hash = "sha256:8e3c5c491ba5870d75e175751d70ddeac81df43caf2a64bae161e181f5e8ea7a"},
 ]
 
 [package.dependencies]

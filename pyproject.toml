@@ -44,6 +44,7 @@ keywords = [
     "data-privacy",
     "entity-resolution",
     "entity-resolved-knowledge-graph",
+    "grpc",
     "ontology",
     "rdf",
     "semantic-layer",
@@ -66,12 +67,12 @@ requires-poetry = ">=2.1"
 
 [tool.poetry.group.dev.dependencies]
 
+icecream = "^2.1.8"
 pytest = "^8.4.2"
 pylint = "^3.3.8"
 mypy = "^1.18.2"
 types-networkx = "^3.5.0.20250918"
 types-grpcio = "^1.0.0.20250914"
-icecream = "^2.1.8"
 
 
 [tool.pytest.ini_options]

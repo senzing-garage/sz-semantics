@@ -1,7 +1,9 @@
 @prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
 
+@prefix bods:  <https://vocab.openownership.org/terms#> .
 @prefix dc:    <http://purl.org/dc/terms/> .
 @prefix foaf:  <http://xmlns.com/foaf/spec/> .
+@prefix ftm:   <https://schema.followthemoney.tech/#> .
 @prefix org:   <http://www.w3.org/ns/org#> .
 @prefix owl:   <http://www.w3.org/2002/07/owl#> .
 @prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -43,7 +45,7 @@ sz:SenzingScheme rdf:type skos:ConceptScheme , owl:Ontology ;
   skos:prefLabel "Senzing minimal SKOS taxonomy"@en
  .
 
-sz:Entity rdf:type skos:Concept , owl:Thing ;
+sz:Entity rdf:type skos:Concept , bods:Entity , ftm:LegalEntity , owl:Thing ;
  skos:inScheme sz:SenzingScheme ;
  skos:topConceptOf sz:SenzingScheme ;
  skos:prefLabel "Entity"@en ;
@@ -63,7 +65,7 @@ sz:DataRecord rdf:type skos:Concept , owl:Thing ;
 .
 
 
-sz:PeopleGroup rdf:type skos:Concept , sz:Entity ;
+sz:PeopleGroup rdf:type skos:Concept , ftm:Membership , sz:Entity ;
  skos:inScheme sz:SenzingScheme ;
  skos:topConceptOf sz:SenzingScheme ;
  skos:prefLabel "People Group"@en ;
@@ -73,7 +75,7 @@ sz:PeopleGroup rdf:type skos:Concept , sz:Entity ;
  dc:identifier wd:Q177634
  .
 
-sz:Person rdf:type skos:Concept , foaf:Agent ;
+sz:Person rdf:type skos:Concept , bods:Person , ftm:Person , foaf:Agent ;
  skos:inScheme sz:SenzingScheme ;
  skos:prefLabel "Person"@en ;
  sz:lemma_phrase "NOUN.person"@en ;
@@ -82,7 +84,7 @@ sz:Person rdf:type skos:Concept , foaf:Agent ;
  skos:broader sz:PeopleGroup
 .
 
-sz:Organization rdf:type skos:Concept , org:Organization ;
+sz:Organization rdf:type skos:Concept , ftm:Organization , org:Organization ;
  skos:inScheme sz:SenzingScheme ;
  skos:prefLabel "Organization"@en ;
  sz:lemma_phrase "NOUN.organization"@en ;

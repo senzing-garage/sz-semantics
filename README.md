@@ -79,34 +79,42 @@ Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/)
 in the `domain.ttl` file, parse the Senzing
 [_entity resolution_](https://senzing.com/what-is-entity-resolution/)
 (ER) results to generate an 
-[`RDFlib`](https://rdflib.readthedocs.io/) _semantic graph_
-then transform this into a 
-[`NetworkX`](https://networkx.org/) _property graph_, which represents a 
-[_semantic layer_](https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/).
+[`RDFlib`](https://rdflib.readthedocs.io/) _semantic graph_.
+
 In other words, generate the "backbone" for constructing an
-[_Entity Resolved Knowledge Graph_](https://senzing.com/entity-resolved-knowledge-graphs/).
+[_Entity Resolved Knowledge Graph_](https://senzing.com/entity-resolved-knowledge-graphs/),
+as a core componet of a
+[_semantic layer_](https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/).
+
+The example code below serializes the _thesaurus_ generated from
+Senzing ER results as `"the.ttl"` then this combined with the Senzing
+_taxonomy_ definitions as `"sem.ttl"` -- where the latter would be
+used for construction knowledge graphs:
+
 
 ```python
 import pathlib
 from sz_semantics import Thesaurus
 
-thes: Thesaurus = Thesaurus()
+thesaurus: Thesaurus = Thesaurus()
+thesaurus.load_source(Thesaurus.DOMAIN_TTL) # "domain.ttl"
 
-thes.parse_er_export(
-    [
-        "data/truth/customers.json",
-        "data/truth/reference.json",
-        "data/truth/watchlist.json",
-    ],
-    export_path = pathlib.Path("data/truth/export.json"),
-    er_path = pathlib.Path("thesaurus.ttl"),
-)
+thesaurus_path: pathlib.Path = pathlib.Path("the.ttl")
+sem_layer_path: pathlib.Path = pathlib.Path("sem.ttl")
 
-thes.load_er_thesaurus(
-    er_path = pathlib.Path("thesaurus.ttl"),
-)
+fp_rdf: io.TextIOWrapper = thesaurus_path.open("w", encoding = "utf-8")
+fp_rdf.write(Thesaurus.RDF_PREAMBLE)
 
-thes.save_sem_layer(pathlib.Path("sem.json"))
+export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
+
+with open(export_path, "r", encoding = "utf-8") as fp_json:
+    for line in fp_json:
+        for rdf_frag in thesaurus.parse_iter(line, language = "en"):
+            fp_rdf.write(rdf_frag)
+            fp_rdf.write("\n")
+
+thesaurus.load_source(thesaurus_path, format = "turtle")
+thesaurus.save_source(sem_layer_path, format = "turtle")
 ```
 
 For an example, run the `demo2.py` script to process the JSON file
@@ -116,11 +124,7 @@ For an example, run the `demo2.py` script to process the JSON file
 poetry run python3 demo2.py
 ```
 
-Check the generated RDF in `thesaurus.ttl` and the resulting property
-graph in the `sem.json` node-link format file.
-
-**Note:** this portion is a work-in-progress, currently refactoring
-toward a more scalable approach for streaming updates.
+Then check the RDF definitions in the generated `sem.ttl` file.
 
 
 ## Usage: gRPC Client/Server

@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Example using `sz_semantics` to mask PII values in Senzing JSON.
+Example using `sz_semantics` for Semantic Represenation of Senzing ER results.
 
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
+import io
 import logging
 import pathlib
 
@@ -17,51 +18,28 @@ if __name__ == "__main__":
     logger: logging.Logger = logging.getLogger(__name__)
     logging.basicConfig(level = logging.WARNING) # DEBUG
 
-    ## choose your adventure: multiple datasets and their ER exports
-    context: str = "truth" # "open" "strw"
+    # initialize a thesaurus and load the Senzing taxonomy
+    thesaurus: Thesaurus = Thesaurus()
+    thesaurus.load_source(Thesaurus.DOMAIN_TTL) # "domain.ttl"
 
-    match context:
-        case "truth":
-            export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
+    # write the preamble of RDF vocabular prefixes
+    thesaurus_path: pathlib.Path = pathlib.Path("the.ttl")
+    fp_rdf: io.TextIOWrapper = thesaurus_path.open("w", encoding = "utf-8")  # pylint: disable=R1732
+    fp_rdf.write(Thesaurus.RDF_PREAMBLE)
 
-            datasets: list = [
-                "data/truth/customers.json",
-                "data/truth/reference.json",
-                "data/truth/watchlist.json",
-            ]
-        case "open":
-            export_path = pathlib.Path("data/open/export.json")
+    # load the Senzing ER exported JSON, and generate RDF fragments
+    # for representing each Sezning entity -- this could be made
+    # concurrent/parallel with `asynchio`
+    export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
 
-            datasets = [
-                "data/open/open-ownership.json",
-                "data/open/open-sanctions.json",
-            ]
-        case "strw":
-            export_path = pathlib.Path("data/strw/export.json")
+    with open(export_path, "r", encoding = "utf-8") as fp_json:
+        for line in fp_json:
+            for rdf_frag in thesaurus.parse_iter(line, language = "en"):
+                fp_rdf.write(rdf_frag)
+                fp_rdf.write("\n")
 
-            datasets = [
-                "data/strw/acme_biz.json",
-                "data/strw/corp_home.json",
-                "data/strw/orcid.json",
-                "data/strw/scopus.json",
-            ]
+    thesaurus.load_source(thesaurus_path, format = "turtle")
 
-    ## load the Senzing entity resolution results into an `RDFlib`
-    ## semantic graph, and serialize the resulting thesaurus as
-    ## `thesaurus.ttl` in "Turtle" format
-    thes: Thesaurus = Thesaurus()
-
-    thes.parse_er_export(
-        datasets,
-        export_path = export_path,
-        er_path = pathlib.Path("thesaurus.ttl"),
-        debug = True,
-    )
-
-    thes.load_er_thesaurus(
-        er_path = pathlib.Path("thesaurus.ttl"),
-    )
-
-    ## serialize `NetworkX` property graph which stores a semantic
-    ## layer in node-link format as `sem.json`
-    thes.save_sem_layer(pathlib.Path("sem.json"))
+    # serialize the Senzing taxonomy + generated thesaurus
+    sem_layer_path: pathlib.Path = pathlib.Path("sem.ttl")
+    thesaurus.save_source(sem_layer_path, format = "turtle")

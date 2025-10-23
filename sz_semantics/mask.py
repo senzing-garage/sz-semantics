@@ -25,7 +25,7 @@ substituted back later.
     PAT_KEY_PAIR: re.Pattern = re.compile(r"^([\w\_\-]+)\:\s+(.*)$")
     PAT_TOKEN: re.Pattern = re.compile(r"([A-Z_]+_\d+)")
 
-    KNOWN_KEYS: typing.Set[ str ] = {
+    KNOWN_KEYS: set[ str ] = {
         "AMOUNT",
         "CANDIDATE_CAP_REACHED",
         "CANDIDATE_FEAT_USAGE_TYPE",
@@ -61,7 +61,7 @@ substituted back later.
         "WHY_KEY",
     }
 
-    MASKED_KEYS: typing.Set[ str ] = {
+    MASKED_KEYS: set[ str ] = {
         "ACCT_NUM",
         "CANDIDATE_FEAT_DESC",
         "DATA_SOURCE",
@@ -99,7 +99,7 @@ a given use case.
         self.logger = logging.getLogger(__name__)
         self.key_count: Counter = Counter()
 
-        self.tokens: typing.Dict[ str, str ] = kv_store.allocate()
+        self.tokens: dict[ str, str ] = kv_store.allocate()
 
 
     def serialize_json (

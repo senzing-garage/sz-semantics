@@ -10,12 +10,11 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-version = "1.1.1"
+version = "1.2.0"
 requires-python = ">=3.11"
 
 dependencies = [
     "rdflib (>=7.2.1,<8.0.0)",
-    "networkx (>=3.5,<4.0)",
     "senzing-grpc (==0.5.11)",
 ]
 

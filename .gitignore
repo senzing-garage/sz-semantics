@@ -1,6 +1,6 @@
 # local files
-thesaurus.ttl
-sem.json
+the.ttl
+sem.ttl
 *~
 
 # Byte-compiled / optimized / DLL files

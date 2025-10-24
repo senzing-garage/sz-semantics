@@ -21,13 +21,8 @@ if __name__ == "__main__":
     ## load a JSON file to use as input, from the CLI argument
     data_path: str = sys.argv[1]
 
-    data: typing.Any = json.load(
-        open(
-            pathlib.Path(data_path),
-            "r",
-            encoding = "utf-8",
-        ),
-    )
+    with open(pathlib.Path(data_path), "r", encoding = "utf-8") as fp:
+        data: typing.Any = json.load(fp)
 
     ## mask the PII values in the data
     masked_data: typing.Any = sz_mask.mask_data(

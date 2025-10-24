@@ -13,7 +13,7 @@ import pathlib
 import tomllib
 import typing
 
-from sz_semantics import Mask, SzClient
+from sz_semantics import SzClient
 
 
 if __name__ == "__main__":

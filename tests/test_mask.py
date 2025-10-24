@@ -16,10 +16,10 @@ from sz_semantics import Mask
 
 def test_mask (
     *,
-    debug: bool = False,
+    debug: bool = False,  # pylint: disable=W0613
     ) -> None:
     """
-Check the the mask/unmask roundtrip protects and preserves the
+Verify that the mask/unmask roundtrip protects and preserves the
 PII values correctly.
     """
     exp_data: dict = {
@@ -35,10 +35,12 @@ PII values correctly.
         },
     }
 
-    exp_text: str = '{"RESOLVED_ENTITY": {"ADDRESS_DATA": ["HOME: HOME_1"], "ENTITY_ID": 1, "ENTITY_NAME": "ENTITY_NAME_1", "IDENTIFIER_DATA": ["EMAIL: EMAIL_1"]}}'
+    exp_text: str = '''
+        {"RESOLVED_ENTITY": {"ADDRESS_DATA": ["HOME: HOME_1"], "ENTITY_ID": 1, "ENTITY_NAME": "ENTITY_NAME_1", "IDENTIFIER_DATA": ["EMAIL: EMAIL_1"]}}
+    '''.strip()  # pylint: disable=C0301
 
     sz_mask: Mask = Mask()
-    masked_data: dict = sz_mask.mask_data(exp_data)
+    masked_data: dict = sz_mask.mask_data(exp_data)  # type: ignore
 
     obs_text: str = json.dumps(masked_data, sort_keys = True)
     assert exp_text == obs_text

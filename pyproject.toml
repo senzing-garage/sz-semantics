@@ -10,12 +10,11 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-version = "1.1.0"
+version = "1.2.0"
 requires-python = ">=3.11"
 
 dependencies = [
     "rdflib (>=7.2.1,<8.0.0)",
-    "networkx (>=3.5,<4.0)",
     "senzing-grpc (==0.5.11)",
 ]
 
@@ -44,6 +43,7 @@ keywords = [
     "data-privacy",
     "entity-resolution",
     "entity-resolved-knowledge-graph",
+    "grpc",
     "ontology",
     "rdf",
     "semantic-layer",
@@ -66,12 +66,12 @@ requires-poetry = ">=2.1"
 
 [tool.poetry.group.dev.dependencies]
 
+icecream = "^2.1.8"
 pytest = "^8.4.2"
 pylint = "^3.3.8"
 mypy = "^1.18.2"
 types-networkx = "^3.5.0.20250918"
 types-grpcio = "^1.0.0.20250914"
-icecream = "^2.1.8"
 
 
 [tool.pytest.ini_options]

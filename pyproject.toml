@@ -10,7 +10,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-version = "1.2.0"
+version = "1.2.1"
 requires-python = ">=3.11"
 
 dependencies = [
@@ -49,6 +49,8 @@ keywords = [
     "semantic-layer",
     "semantics",
     "skos",
+    "taxonomy",
+    "thesaurus",
 ]
 
 

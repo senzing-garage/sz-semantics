@@ -12,6 +12,7 @@
 @prefix wd:    <http://www.wikidata.org/entity/> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 
+
 sz:match_key rdfs:domain sz:Entity ;
   rdfs:range xsd:string ;
   skos:definition "which features matched when a record last was processed individually"@en
@@ -22,29 +23,15 @@ sz:match_level rdfs:domain sz:Entity ;
   skos:definition "signifies how the source record contributes to this entity"@en
 .
 
-sz:co_occurs_with rdfs:domain skos:Concept ;
-  rdfs:range skos:Concept ;
-  skos:definition "a neighborhood co-occurrence of extracted entities within a lexical graph"@en
-.
-
-sz:compound_elem_of rdfs:domain skos:Concept ;
-  rdfs:range skos:Concept ;
-  skos:definition "an extracted entity which is potentially included in a longer phrase"@en
-.
-
-sz:follows_lexically rdfs:domain skos:Concept ;
-  rdfs:range skos:Concept ;
-  skos:definition "a sequential co-occurrence of extracted entities within a lexical graph"@en
-.
-
 sz:lemma_phrase rdfs:domain skos:Concept ;
   rdfs:range rdf:langString ;
   skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en
 .
 
-sz:within_chunk rdfs:domain skos:Concept ;
-  rdfs:range rdfs:Literal ;
-  skos:definition "the source text for an extracted entity"@en
+sz:member_of rdfs:domain sz:Person ;
+  rdfs:range sz:Organization ;
+  skos:definition "which people are members of which organizations?"@en ;
+  rdf:type sz:relation, wco:memberOf
 .
 
 
@@ -60,7 +47,7 @@ sz:Entity rdf:type skos:Concept , bods:Entity , ftm:LegalEntity , wco:Agent ;
  skos:topConceptOf sz:SenzingScheme ;
  skos:prefLabel "Entity"@en ;
  sz:lemma_phrase "NOUN.entity"@en ;
- skos:definition "Anything that can be considered, discussed, or observed; in this context generally a Person or Organization"@en ;
+ skos:definition "An Entity is anything that can be considered, discussed, or observed; in this context, this is generally a Person or Organization"@en ;
  dc:identifier wd:Q35120
 .
 
@@ -70,29 +57,17 @@ sz:DataRecord rdf:type skos:Concept , prov:Entity , wco:TransactionalEvent ;
  skos:prefLabel "Data Record"@en ;
  skos:altLabel "Record"@en ;
  sz:lemma_phrase "NOUN.data NOUN.record"@en ;
- skos:definition "A composite data type; information block containing specific, identified fields"@en ;
+ skos:definition "A Data Record is a composite data type; an information block containing specific, identified fields"@en ;
  dc:identifier wd:Q2470517
 .
-
-sz:PeopleGroup rdf:type skos:Concept , ftm:Membership ;
- skos:inScheme sz:SenzingScheme ;
- skos:topConceptOf sz:SenzingScheme ;
- skos:prefLabel "People Group"@en ;
- skos:altLabel "Community"@en ;
- sz:lemma_phrase "NOUN.people NOUN.group"@en ;
- skos:definition "A people group is a social unit of human organisms who share common values"@en ;
- dc:identifier wd:Q177634
- .
-
 
 sz:Person rdf:type skos:Concept , bods:Person , ftm:Person , wco:Person ;
  skos:inScheme sz:SenzingScheme ;
  rdfs:subClassOf sz:Entity ;
  skos:prefLabel "Person"@en ;
  sz:lemma_phrase "NOUN.person"@en ;
- skos:definition "A person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
- dc:identifier wd:Q5 ;
- skos:broader sz:PeopleGroup
+ skos:definition "A Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
+ dc:identifier wd:Q5
 .
 
 sz:Organization rdf:type skos:Concept , ftm:Organization , wco:Organization ;
@@ -100,13 +75,6 @@ sz:Organization rdf:type skos:Concept , ftm:Organization , wco:Organization ;
  rdfs:subClassOf sz:Entity ;
  skos:prefLabel "Organization"@en ;
  sz:lemma_phrase "NOUN.organization"@en ;
- skos:definition "An organization is a social entity established to meet needs or pursue goals"@en ;
- dc:identifier wd:Q43229 ;
- skos:broader sz:PeopleGroup
-.
-
-sz:member_of rdfs:domain sz:Person ;
-  rdfs:range sz:Organization ;
-  skos:definition "which people are members of which organizations?"@en ;
-  rdf:type sz:relation, wco:memberOf
+ skos:definition "An Organization is a social entity established to meet needs or pursue goals"@en ;
+ dc:identifier wd:Q43229
 .

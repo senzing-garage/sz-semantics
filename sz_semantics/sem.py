@@ -73,9 +73,6 @@ larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
         self.rdf_graph.bind("skos", SKOS)
         self.rdf_graph.bind("sz", SZ)
 
-        ## `node_map` maps from IRI (in N3 prefix mode) to node IDs
-        self.node_map: dict[ str, int ] = self.kv_store.allocate()
-
 
     def load_source (
         self,
@@ -118,37 +115,6 @@ Serialize triples to a file.
 Normalize IRI prefixes to N3 "Turtle" format.
         """
         return uri.n3(self.rdf_graph.namespace_manager)
-
-
-    def get_ner_labels (
-        self,
-        ) -> list[ str ]:
-        """
-Accessor: iterate through `skos:Concept` entities to extract labels
-used for zero-shot NER such as the `GLiNER` library.
-        """
-        return [
-            label.toPython()  # type: ignore
-            for concept_iri in self.rdf_graph.subjects(RDF.type, SKOS.Concept)
-            for label in self.rdf_graph.objects(concept_iri, SKOS.prefLabel, unique = True)
-        ]
-
-
-    def get_label_map (
-        self,
-        ) -> dict[ str, str ]:
-        """
-Accessor: iterate through `skos:Concept` entities to extract a mapping
-between NER labels and abbreviated IRIs.
-
-Used for _entity linking_ when using zero-shot NER such as the `GLiNER`
-library.
-        """
-        return {
-            label.toPython(): self.n3(concept_iri)  # type: ignore
-            for concept_iri in self.rdf_graph.subjects(RDF.type, SKOS.Concept)
-            for label in self.rdf_graph.objects(concept_iri, SKOS.prefLabel, unique = True)
-        }
 
 
     ######################################################################

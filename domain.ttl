@@ -28,9 +28,14 @@ sz:lemma_phrase rdfs:domain skos:Concept ;
   skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en
 .
 
+sz:ner_label rdfs:domain skos:Concept ;
+  rdfs:range xsd:boolean ;
+  skos:definition "whether the skos:prefLabel value can be used as an NER label"@en
+.
+
 sz:member_of rdfs:domain sz:Person ;
   rdfs:range sz:Organization ;
-  skos:definition "which people are members of which organizations?"@en ;
+  skos:definition "which people are members of which organizations"@en ;
   rdf:type sz:relation, wco:memberOf
 .
 
@@ -47,7 +52,7 @@ sz:Entity rdf:type skos:Concept , bods:Entity , ftm:LegalEntity , wco:Agent ;
  skos:topConceptOf sz:SenzingScheme ;
  skos:prefLabel "Entity"@en ;
  sz:lemma_phrase "NOUN.entity"@en ;
- skos:definition "An Entity is anything that can be considered, discussed, or observed; in this context, this is generally a Person or Organization"@en ;
+ skos:definition "Entity is anything that can be considered, discussed, or observed; in this context, this is generally a Person or Organization"@en ;
  dc:identifier wd:Q35120
 .
 
@@ -57,7 +62,7 @@ sz:DataRecord rdf:type skos:Concept , prov:Entity , wco:TransactionalEvent ;
  skos:prefLabel "Data Record"@en ;
  skos:altLabel "Record"@en ;
  sz:lemma_phrase "NOUN.data NOUN.record"@en ;
- skos:definition "A Data Record is a composite data type; an information block containing specific, identified fields"@en ;
+ skos:definition "Data Record is a composite data type; an information block containing specific, identified fields"@en ;
  dc:identifier wd:Q2470517
 .
 
@@ -66,7 +71,8 @@ sz:Person rdf:type skos:Concept , bods:Person , ftm:Person , wco:Person ;
  rdfs:subClassOf sz:Entity ;
  skos:prefLabel "Person"@en ;
  sz:lemma_phrase "NOUN.person"@en ;
- skos:definition "A Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
+ sz:ner_label true ;
+ skos:definition "Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
  dc:identifier wd:Q5
 .
 
@@ -75,6 +81,7 @@ sz:Organization rdf:type skos:Concept , ftm:Organization , wco:Organization ;
  rdfs:subClassOf sz:Entity ;
  skos:prefLabel "Organization"@en ;
  sz:lemma_phrase "NOUN.organization"@en ;
- skos:definition "An Organization is a social entity established to meet needs or pursue goals"@en ;
+ sz:ner_label true ;
+ skos:definition "Organization is a social entity established to meet needs or pursue goals"@en ;
  dc:identifier wd:Q43229
 .

@@ -90,6 +90,22 @@ Load triples from a data source.
         )
 
 
+    def load_source_text (
+        self,
+        source: str,
+        *,
+        format: str = "turtle",  # pylint: disable=W0622
+        ) -> None:
+        """
+Load triples from a string as the data source, which in `RDFlib`
+requires a different calling format.
+        """
+        self.rdf_graph.parse(
+            data = source,
+            format = format,
+        )
+
+
     def save_source (
         self,
         rdf_path: pathlib.Path,

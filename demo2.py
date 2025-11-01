@@ -7,7 +7,6 @@ Example using `sz_semantics` for Semantic Represenation of Senzing ER results.
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
-import io
 import logging
 import pathlib
 
@@ -20,12 +19,7 @@ if __name__ == "__main__":
 
     # initialize a thesaurus and load the Senzing taxonomy
     thesaurus: Thesaurus = Thesaurus()
-    thesaurus.load_source(Thesaurus.DOMAIN_TTL) # "domain.ttl"
-
-    # write the preamble of RDF vocabular prefixes
-    thesaurus_path: pathlib.Path = pathlib.Path("the.ttl")
-    fp_rdf: io.TextIOWrapper = thesaurus_path.open("w", encoding = "utf-8")  # pylint: disable=R1732
-    fp_rdf.write(Thesaurus.RDF_PREAMBLE)
+    thesaurus.load_source(Thesaurus.DOMAIN_TTL)
 
     # load the Senzing ER exported JSON, and generate RDF fragments
     # for representing each Sezning entity -- this could be made
@@ -35,11 +29,11 @@ if __name__ == "__main__":
     with open(export_path, "r", encoding = "utf-8") as fp_json:
         for line in fp_json:
             for rdf_frag in thesaurus.parse_iter(line, language = "en"):
-                fp_rdf.write(rdf_frag)
-                fp_rdf.write("\n")
-
-    thesaurus.load_source(thesaurus_path, format = "turtle")
+                thesaurus.load_source_text(
+                    Thesaurus.RDF_PREAMBLE + rdf_frag,
+                    format = "turtle",
+                )
 
     # serialize the Senzing taxonomy + generated thesaurus
-    sem_layer_path: pathlib.Path = pathlib.Path("sem.ttl")
-    thesaurus.save_source(sem_layer_path, format = "turtle")
+    thesaurus_path: pathlib.Path = pathlib.Path("thesaurus.ttl")
+    thesaurus.save_source(thesaurus_path, format = "turtle")

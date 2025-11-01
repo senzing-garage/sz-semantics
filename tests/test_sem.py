@@ -33,9 +33,14 @@ Verify that the Senzing ER results are represented correctly in RDF.
         "sz:customers_1004",
     }
 
+    # point to the correct directory for input files
+    base_dir: pathlib.Path = pathlib.Path(__file__).parent.parent.resolve()
+
     # initialize a thesaurus and load the Senzing taxonomy
+    domain_path: pathlib.Path = base_dir / "domain.ttl"
+
     thesaurus: Thesaurus = Thesaurus()
-    thesaurus.load_source(Thesaurus.DOMAIN_TTL) # "domain.ttl"
+    thesaurus.load_source(domain_path)
 
     # write the preamble of RDF vocabular prefixes
     fp_rdf: tempfile._TemporaryFileWrapper = tempfile.NamedTemporaryFile(  # pylint: disable=R1732
@@ -48,7 +53,7 @@ Verify that the Senzing ER results are represented correctly in RDF.
 
     # load the Senzing ER exported JSON, and generate RDF fragments
     # for representing each Sezning entity
-    export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
+    export_path: pathlib.Path = base_dir / "data/truth/export.json"
 
     with open(export_path, "r", encoding = "utf-8") as fp_json:
         for line in fp_json:

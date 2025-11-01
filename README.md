@@ -87,34 +87,29 @@ as a core componet of a
 [_semantic layer_](https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/).
 
 The example code below serializes the _thesaurus_ generated from
-Senzing ER results as `"the.ttl"` then this combined with the Senzing
-_taxonomy_ definitions as `"sem.ttl"` -- where the latter would be
-used for construction knowledge graphs:
-
+Senzing ER results as `"thesaurus.ttl"` combined with the Senzing
+_taxonomy_ definitions, which can be used for constructing knowledge
+graphs:
 
 ```python
 import pathlib
 from sz_semantics import Thesaurus
 
 thesaurus: Thesaurus = Thesaurus()
-thesaurus.load_source(Thesaurus.DOMAIN_TTL) # "domain.ttl"
-
-thesaurus_path: pathlib.Path = pathlib.Path("the.ttl")
-sem_layer_path: pathlib.Path = pathlib.Path("sem.ttl")
-
-fp_rdf: io.TextIOWrapper = thesaurus_path.open("w", encoding = "utf-8")
-fp_rdf.write(Thesaurus.RDF_PREAMBLE)
+thesaurus.load_source(Thesaurus.DOMAIN_TTL)
 
 export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
 
 with open(export_path, "r", encoding = "utf-8") as fp_json:
     for line in fp_json:
         for rdf_frag in thesaurus.parse_iter(line, language = "en"):
-            fp_rdf.write(rdf_frag)
-            fp_rdf.write("\n")
+            thesaurus.load_source_text(
+                Thesaurus.RDF_PREAMBLE + rdf_frag,
+                format = "turtle",
+            )
 
-thesaurus.load_source(thesaurus_path, format = "turtle")
-thesaurus.save_source(sem_layer_path, format = "turtle")
+thesaurus_path: pathlib.Path = pathlib.Path("thesaurus.ttl")
+thesaurus.save_source(thesaurus_path, format = "turtle")
 ```
 
 For an example, run the `demo2.py` script to process the JSON file
@@ -124,7 +119,7 @@ For an example, run the `demo2.py` script to process the JSON file
 poetry run python3 demo2.py
 ```
 
-Then check the RDF definitions in the generated `sem.ttl` file.
+Then check the RDF definitions in the generated `thesaurus.ttl` file.
 
 
 ## Usage: gRPC Client/Server
@@ -168,6 +163,7 @@ Kudos to
 [@jbutcher21](https://github.com/jbutcher21),
 [@docktermj](https://github.com/docktermj),
 [@cj2001](https://github.com/cj2001),
+[@503jmt](https://github.com/503jmt),
 and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
 </details>
 

@@ -87,23 +87,27 @@ sz:Person a skos:Concept, bods:Person, ftm:Person, wco:Person;
   sz:ner_label true;
   dc:identifier wd:Q5 .
 
-sz:lemma_phrase rdfs:domain skos:Concept;
-  rdfs:range rdf:langString;
-  skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en .
-
-sz:match_key rdfs:domain sz:Entity;
+sz:match_key a sz:relation;
+  rdfs:domain sz:Entity;
   rdfs:range xsd:string;
   skos:definition "which features matched when a record last was processed individually"@en .
 
-sz:match_level rdfs:domain sz:Entity;
+sz:match_level a sz:relation;
+  rdfs:domain sz:Entity;
   rdfs:range xsd:integer;
   skos:definition "signifies how the source record contributes to this entity"@en .
+
+sz:lemma_phrase a sz:relation;
+  rdfs:domain skos:Concept;
+  rdfs:range rdf:langString;
+  skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en .
+
+sz:ner_label a sz:relation;
+  rdfs:domain skos:Concept;
+  rdfs:range xsd:boolean;
+  skos:definition "indicates whether the skos:prefLabel value can be used as an NER label"@en .
 
 sz:member_of a sz:relation, wco:memberOf;
   rdfs:domain sz:Person;
   rdfs:range sz:Organization;
-  skos:definition "which people are members of which organizations"@en .
-
-sz:ner_label rdfs:domain skos:Concept;
-  rdfs:range xsd:boolean;
-  skos:definition "whether the skos:prefLabel value can be used as an NER label"@en .
+  skos:definition "indicates when a person is known to be a member of an organization"@en .

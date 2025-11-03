@@ -214,7 +214,7 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
                 match_key = "INITIAL"
 
             src_id: str = rec["DATA_SOURCE"].replace(" ", "_").lower()
-            src_iri: str = f"{self.SZ_PREFIX}{src_id}"
+            src_iri: str = f"{self.SZ_PREFIX}ds_{src_id}"
 
             rec_id: str = rec["RECORD_ID"]
             rec_iri: str = f"{src_iri}_{rec_id}"

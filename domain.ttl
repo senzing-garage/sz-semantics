@@ -87,27 +87,31 @@ sz:Person a skos:Concept, bods:Person, ftm:Person, wco:Person;
   sz:ner_label true;
   dc:identifier wd:Q5 .
 
-sz:match_key a sz:relation;
+
+sz:relation a rdf:Property .
+
+sz:match_key rdfs:subPropertyOf sz:relation;
   rdfs:domain sz:Entity;
   rdfs:range xsd:string;
-  skos:definition "which features matched when a record last was processed individually"@en .
+  skos:definition "indicates which features matched when a data record was last processed individually"@en .
 
 sz:match_level a sz:relation;
   rdfs:domain sz:Entity;
   rdfs:range xsd:integer;
-  skos:definition "signifies how the source record contributes to this entity"@en .
+  skos:definition "signifies how the source data record contributes to this entity"@en .
 
-sz:lemma_phrase a sz:relation;
+sz:lemma_phrase rdfs:subPropertyOf sz:relation;
   rdfs:domain skos:Concept;
   rdfs:range rdf:langString;
-  skos:definition "the parsed, lemmatized noun phrase for an extracted entity"@en .
+  skos:definition "the parsed, lemmatized noun phrase for an extracted entity, used as a unique identifier for entity linking"@en .
 
-sz:ner_label a sz:relation;
+sz:ner_label rdfs:subPropertyOf sz:relation;
   rdfs:domain skos:Concept;
   rdfs:range xsd:boolean;
   skos:definition "indicates whether the skos:prefLabel value can be used as an NER label"@en .
 
-sz:member_of a sz:relation, wco:memberOf;
+sz:member_of rdfs:subPropertyOf sz:relation;
+  a wco:memberOf;
   rdfs:domain sz:Person;
   rdfs:range sz:Organization;
   skos:definition "indicates when a person is known to be a member of an organization"@en .

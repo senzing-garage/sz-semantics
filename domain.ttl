@@ -7,6 +7,7 @@
 @prefix dcterms:  <http://purl.org/dc/terms/> .
 @prefix foaf:     <http://xmlns.com/foaf/0.1/> .
 @prefix ftm:      <https://schema.followthemoney.tech/#> .
+@prefix nc:       <http://release.niem.gov/niem/niem-core/5.0/#> .
 @prefix owl:      <http://www.w3.org/2002/07/owl#> .
 @prefix ppcl:     <http://www.semantic-web.at/ppcl/> .
 @prefix prov:     <http://www.w3.org/ns/prov#> .
@@ -19,99 +20,116 @@
 @prefix wd:       <http://www.wikidata.org/entity/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
 
-<https://contextually.poolparty.biz/senzing> a void:Dataset;
-  ppcl:numberOfConcepts "4"^^xsd:int;
-  ppcl:numberOfConceptSchemes "1"^^xsd:int;
-  ppcl:availablelanguages "fr", "es", "en";
-  dcterms:creator <https://contextually.poolparty.biz/user/3d5c61e1-814a-43f8-8695-6afd519c37eb>;
-  dcterms:language "en";
-  dcterms:date "2025-10-31T00:31:37.343Z"^^xsd:dateTime;
-  dcterms:title "senzing"@en;
-  void:sparqlEndpoint <https://contextually.poolparty.biz/PoolParty/sparql/senzing>;
-  void:feature _:node2;
-  void:vocabulary <http://www.w3.org/2004/02/skos/core#> .
+<https://contextually.poolparty.biz/senzing> a void:Dataset ;
+  ppcl:numberOfConcepts "4"^^xsd:int ;
+  ppcl:numberOfConceptSchemes "1"^^xsd:int ;
+  ppcl:availablelanguages "fr", "es", "en" ;
+  dcterms:creator <https://contextually.poolparty.biz/user/3d5c61e1-814a-43f8-8695-6afd519c37eb> ;
+  dcterms:language "en" ;
+  dcterms:date "2025-10-31T00:31:37.343Z"^^xsd:dateTime ;
+  dcterms:title "senzing"@en ;
+  void:sparqlEndpoint <https://contextually.poolparty.biz/PoolParty/sparql/senzing> ;
+  void:feature _:node2 ;
+  void:vocabulary <http://www.w3.org/2004/02/skos/core#> ;
+.
 
-_:node2 a void:TechnicalFeature;
-  rdfs:label "RDF/XML";
-  dcterms:format "application/rdf+xml" .
+_:node2 a void:TechnicalFeature ;
+  rdfs:label "RDF/XML" ;
+  dcterms:format "application/rdf+xml" ;
+.
 
-<https://contextually.poolparty.biz/senzing/adms/0.1> a adms:SemanticAsset;
-  dcterms:title "senzing"@en;
-  dcterms:created "2025-10-31T00:31:37.343Z"^^xsd:dateTime;
-  dcterms:identifier <urn:uuid:2f690379-0d7d-4d5e-877d-a7880c240856>;
-  foaf:homepage <https://contextually.poolparty.biz/PoolParty/wiki/senzing>;
-  rad:version 1.0E-1 .
+<https://contextually.poolparty.biz/senzing/adms/0.1> a adms:SemanticAsset ;
+  dcterms:title "senzing"@en ;
+  dcterms:created "2025-10-31T00:31:37.343Z"^^xsd:dateTime ;
+  dcterms:identifier <urn:uuid:2f690379-0d7d-4d5e-877d-a7880c240856> ;
+  foaf:homepage <https://contextually.poolparty.biz/PoolParty/wiki/senzing> ;
+  rad:version 1.0E-1 ;
+.
 
-sz:SenzingScheme a skos:ConceptScheme;
-  dcterms:title "Resource"@en;
-  skos:definition "A mid-level SKOS taxonomy used for representing Senzing results"@en;
-  skos:hasTopConcept sz:DataRecord, sz:Entity, sz:Organization, sz:Person;
-  skos:prefLabel "Senzing minimal SKOS taxonomy"@en;
-  dc:publisher <https://senzing.com/>;
-  dc:creator <https://orcid.org/0000-0003-3167-1539> .
+sz:SenzingScheme a skos:ConceptScheme ;
+  dcterms:title "Resource"@en ;
+  skos:definition "A mid-level SKOS taxonomy used for representing Senzing results"@en ;
+  skos:hasTopConcept sz:Entity, sz:Organization, sz:Person, sz:DataRecord ;
+  skos:prefLabel "Senzing minimal SKOS taxonomy"@en ;
+  dcterms:publisher <https://senzing.com/> ;
+  dcterms:creator <https://orcid.org/0000-0003-3167-1539> ;
+.
 
-sz:DataRecord a skos:Concept, prov:Entity, wco:TransactionalEvent;
-  skos:definition "Data Record is a composite data type; an information block containing specific, identified fields"@en;
-  skos:inScheme sz:SenzingScheme;
-  skos:topConceptOf sz:SenzingScheme;
-  skos:prefLabel "Data Record"@en;
-  skos:altLabel "Record"@en;
-  sz:lemma_phrase "NOUN.data NOUN.record"@en;
-  dc:identifier wd:Q2470517 .
+sz:Entity a skos:Concept, nc:EntityType ;
+  owl:equivalentClass ftm:LegalEntity, bods:Entity, wco:Agent ;
+  dc:identifier wd:Q35120 ;
+  skos:definition "Entity is anything that can be considered, discussed, or observed ; in this context, this is generally a Person or Organization"@en ;
+  skos:inScheme sz:SenzingScheme ;
+  skos:topConceptOf sz:SenzingScheme ;
+  skos:prefLabel "Entity"@en ;
+  sz:lemma_phrase "NOUN.entity"@en ;
+.
 
-sz:Entity a skos:Concept, bods:Entity, ftm:LegalEntity, wco:Agent;
-  skos:definition "Entity is anything that can be considered, discussed, or observed; in this context, this is generally a Person or Organization"@en;
-  skos:inScheme sz:SenzingScheme;
-  skos:topConceptOf sz:SenzingScheme;
-  skos:prefLabel "Entity"@en;
-  sz:lemma_phrase "NOUN.entity"@en;
-  dc:identifier wd:Q35120 .
+sz:Organization a skos:Concept, nc:OrganizationType ;
+  rdfs:subClassOf sz:Entity ;
+  owl:equivalentClass ftm:Organization, wco:Organization ;
+  dc:identifier wd:Q43229 ;
+  skos:definition "Organization is a social entity established to meet needs or pursue goals"@en ;
+  skos:inScheme sz:SenzingScheme ;
+  skos:topConceptOf sz:SenzingScheme ;
+  skos:prefLabel "Organization"@en ;
+  sz:lemma_phrase "NOUN.organization"@en ;
+  sz:ner_label true ;
+.
 
-sz:Organization a skos:Concept, ftm:Organization, wco:Organization;
-  rdfs:subClassOf sz:Entity;
-  skos:definition "Organization is a social entity established to meet needs or pursue goals"@en;
-  skos:inScheme sz:SenzingScheme;
-  skos:topConceptOf sz:SenzingScheme;
-  skos:prefLabel "Organization"@en;
-  sz:lemma_phrase "NOUN.organization"@en;
-  sz:ner_label true;
-  dc:identifier wd:Q43229 .
+sz:Person a skos:Concept, nc:PersonType ;
+  rdfs:subClassOf sz:Entity ;
+  owl:equivalentClass ftm:Person, bods:Person, wco:Person ;
+  dc:identifier wd:Q5 ;
+  skos:definition "Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
+  skos:inScheme sz:SenzingScheme ;
+  skos:topConceptOf sz:SenzingScheme ;
+  skos:prefLabel "Person"@en ;
+  sz:lemma_phrase "NOUN.person"@en ;
+  sz:ner_label true ;
+.
 
-sz:Person a skos:Concept, bods:Person, ftm:Person, wco:Person;
-  rdfs:subClassOf sz:Entity;
-  skos:definition "Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en;
-  skos:inScheme sz:SenzingScheme;
-  skos:topConceptOf sz:SenzingScheme;
-  skos:prefLabel "Person"@en;
-  sz:lemma_phrase "NOUN.person"@en;
-  sz:ner_label true;
-  dc:identifier wd:Q5 .
+sz:DataRecord a skos:Concept ;
+  owl:equivalentClass prov:Entity, wco:TransactionalEvent ;
+  dc:identifier wd:Q2470517 ;
+  skos:definition "Data Record is a composite data type, as an information block containing specific, identified fields"@en ;
+  skos:inScheme sz:SenzingScheme ;
+  skos:topConceptOf sz:SenzingScheme ;
+  skos:prefLabel "Data Record"@en ;
+  skos:altLabel "Record"@en ;
+  sz:lemma_phrase "NOUN.data NOUN.record"@en ;
+.
 
 
 sz:relation a rdf:Property .
 
-sz:match_key rdfs:subPropertyOf sz:relation;
-  rdfs:domain sz:Entity;
-  rdfs:range xsd:string;
-  skos:definition "indicates which features matched when a data record was last processed individually"@en .
+sz:match_key rdfs:subPropertyOf sz:relation ;
+  rdfs:domain sz:Entity ;
+  rdfs:range xsd:string ;
+  skos:definition "indicates which features matched when a data record was last processed individually"@en ;
+.
 
-sz:match_level a sz:relation;
-  rdfs:domain sz:Entity;
-  rdfs:range xsd:integer;
-  skos:definition "signifies how the source data record contributes to this entity"@en .
+sz:match_level a sz:relation ;
+  rdfs:domain sz:Entity ;
+  rdfs:range xsd:string ;
+  skos:definition "describes how the source data record contributes to this entity"@en ;
+.
 
-sz:lemma_phrase rdfs:subPropertyOf sz:relation;
-  rdfs:domain skos:Concept;
-  rdfs:range rdf:langString;
-  skos:definition "the parsed, lemmatized noun phrase for an extracted entity, used as a unique identifier for entity linking"@en .
+sz:lemma_phrase rdfs:subPropertyOf sz:relation ;
+  rdfs:domain skos:Concept ;
+  rdfs:range rdf:langString ;
+  skos:definition "a parsed, lemmatized noun phrase, used as a unique identifier in entity linking"@en ;
+.
 
-sz:ner_label rdfs:subPropertyOf sz:relation;
-  rdfs:domain skos:Concept;
-  rdfs:range xsd:boolean;
-  skos:definition "indicates whether the skos:prefLabel value can be used as an NER label"@en .
+sz:ner_label rdfs:subPropertyOf sz:relation ;
+  rdfs:domain skos:Concept ;
+  rdfs:range xsd:boolean ;
+  skos:definition "indicates whether the skos:prefLabel value can be used as an NER label"@en ;
+.
 
-sz:member_of rdfs:subPropertyOf sz:relation;
-  a wco:memberOf;
-  rdfs:domain sz:Person;
-  rdfs:range sz:Organization;
-  skos:definition "indicates when a person is known to be a member of an organization"@en .
+sz:member_of rdfs:subPropertyOf sz:relation ;
+  owl:equivalentClass wco:memberOf ;
+  rdfs:domain sz:Person ;
+  rdfs:range sz:Organization ;
+  skos:definition "indicates when a person is known to be a member of an organization"@en ;
+.

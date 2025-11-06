@@ -16,7 +16,9 @@ from sz_semantics import Mask
 
 
 if __name__ == "__main__":
-    sz_mask: Mask = Mask()
+    if len(sys.argv) < 1:
+        print("needs a file path specified as a CLI argument")
+        sys.exit(-1)
 
     ## load a JSON file to use as input, from the CLI argument
     data_path: str = sys.argv[1]
@@ -25,6 +27,8 @@ if __name__ == "__main__":
         data: typing.Any = json.load(fp)
 
     ## mask the PII values in the data
+    sz_mask: Mask = Mask()
+
     masked_data: typing.Any = sz_mask.mask_data(
         data,
         debug = False, # True

@@ -1,7 +1,7 @@
 ## TODO:
 
-generate RDF for data records first, retaining in-memory only the required metadata per record
+  * add foaf vocab as equiv classes
 
-represent the DISCLOSED relationships (see "strw" dataset)
-
-add a `pyShacl` unit test for the RDF case
+  * add `pyShacl` SHACL rules
+     - examples for validation
+     - unit test for `test_sem.py`

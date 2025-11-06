@@ -2,46 +2,42 @@
 # -*- coding: utf-8 -*-
 
 """
-Example using `sz_semantics` for gRPC client/server access to the Senzing SDK.
+Example using `sz_semantics` for Semantic Represenation of Senzing ER results.
 
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
-import json
 import logging
 import pathlib
-import tomllib
-import typing
+import sys
 
-from sz_semantics import SzClient
+from sz_semantics import Thesaurus
 
 
 if __name__ == "__main__":
-    config_path: pathlib.Path = pathlib.Path("config.toml")
-
-    with open(config_path, mode = "rb") as fp:
-        config: dict = tomllib.load(fp)
-
     logger: logging.Logger = logging.getLogger(__name__)
     logging.basicConfig(level = logging.WARNING) # DEBUG
 
-    data_sources: typing.Dict[ str, str ] = {
-        "CUSTOMERS": "data/truth/customers.json",
-        "WATCHLIST": "data/truth/watchlist.json",
-        "REFERENCE": "data/truth/reference.json",
-    }
+    if len(sys.argv) < 1:
+        print("needs a file path specified as a CLI argument")
+        sys.exit(-1)
 
-    # configure the Senzing SDK
-    sz: SzClient = SzClient(
-        config,
-        data_sources,
-        debug = False,
-    )
+    # initialize a thesaurus and load the Senzing taxonomy
+    thesaurus: Thesaurus = Thesaurus()
+    thesaurus.load_source(Thesaurus.DOMAIN_TTL)
 
-    # run entity resolution on the collection of datasets
-    ents: dict = sz.entity_resolution(
-        data_sources,
-        debug = False,
-    )
+    # load the JSONL from Senzing ER and generate RDF fragments
+    # for representing each Sezning entity
+    export_path: pathlib.Path = pathlib.Path(sys.argv[1])
 
-    print(json.dumps(ents, indent = 2))
+    with open(export_path, "r", encoding = "utf-8") as fp_json:
+        for line in fp_json:
+            for rdf_frag in thesaurus.parse_iter(line, language = "en"):
+                thesaurus.load_source_text(
+                    Thesaurus.RDF_PREAMBLE + rdf_frag,
+                    format = "turtle",
+                )
+
+    # serialize the Senzing taxonomy + generated thesaurus
+    thesaurus_path: pathlib.Path = pathlib.Path("thesaurus.ttl")
+    thesaurus.save_source(thesaurus_path, format = "turtle")

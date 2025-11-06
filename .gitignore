@@ -1,5 +1,7 @@
 # local files
 thesaurus.ttl
+export.json
+example.ttl
 *~
 
 # Byte-compiled / optimized / DLL files

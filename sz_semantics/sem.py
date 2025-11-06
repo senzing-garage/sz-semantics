@@ -8,7 +8,6 @@ Manage the computable semantics of a domain context, based on using
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
-from collections import Counter
 import json
 import logging
 import pathlib
@@ -33,20 +32,27 @@ vocabulary, taxonomy, thesaurus, and ontology.
     DOMAIN_TTL: str = "https://raw.githubusercontent.com/senzing-garage/sz-semantics/refs/heads/main/domain.ttl"  # pylint: disable=C0301
 
     RDF_PREAMBLE: str = """
-@prefix sz:    <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
+@prefix sz:       <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
 
-@prefix bods:  <https://vocab.openownership.org/terms#> .
-@prefix dc:    <http://purl.org/dc/elements/1.1/> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-@prefix ftm:   <https://schema.followthemoney.tech/#> .
-@prefix prov:  <http://www.w3.org/ns/prov#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
-@prefix wco:   <https://id.oclc.org/worldcat/ontology/> .
-@prefix wd:    <http://www.wikidata.org/entity/> .
-@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix adms:     <http://www.w3.org/ns/adms#> .
+@prefix bods:     <https://vocab.openownership.org/terms#> .
+@prefix dc:       <http://purl.org/dc/elements/1.1/> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+@prefix foaf:     <http://xmlns.com/foaf/0.1/> .
+@prefix ftm:      <https://schema.followthemoney.tech/#> .
+@prefix nc:       <http://release.niem.gov/niem/niem-core/5.0/#> .
+@prefix owl:      <http://www.w3.org/2002/07/owl#> .
+@prefix ppcl:     <http://www.semantic-web.at/ppcl/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix rad:      <http://www.w3.org/ns/rad#> .
+@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix void:     <http://rdfs.org/ns/void#> .
+@prefix wco:      <https://id.oclc.org/worldcat/ontology/> .
+@prefix wd:       <http://www.wikidata.org/entity/> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
         """.lstrip()
 
 
@@ -200,81 +206,79 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
 
         # parse the resolved data records
         res_ent: dict = data["RESOLVED_ENTITY"]
-        entity_id: str = self.SZ_PREFIX + str(res_ent["ENTITY_ID"])
-        ent_type: str = ""
+        ent_id: str = self.SZ_PREFIX + str(res_ent["ENTITY_ID"])
+        ent_name: str = str(res_ent["ENTITY_NAME"])
 
+        for features in res_ent["FEATURES"]["RECORD_TYPE"]:
+            ent_type: str = features.get("FEAT_DESC")
+
+        if ent_type in [ "GENERIC" ]:
+            ent_type = "Person"
+
+        # generate the RDF represenation for this entity
         rdf_frag: str = ""
-        top_names: Counter = Counter()
+        rdf_frag += f"\n{ent_id} {self.n3(RDF.type)} sz:{ent_type.capitalize()} ;"
+        rdf_frag += f"\n {self.n3(SKOS.prefLabel)} \"{ent_name}\"@{language} ;"
+        rdf_frag += "\n."
 
         for rec in res_ent["RECORDS"]:
             match_key: str = rec["MATCH_KEY"]
-            match_level: int = rec["MATCH_LEVEL"]
+            match_level: str = rec["MATCH_LEVEL_CODE"]
 
             if match_key == "":
                 match_key = "INITIAL"
 
+            if match_level == "":
+                match_level = "INITIAL"
+
             src_id: str = rec["DATA_SOURCE"].replace(" ", "_").lower()
-            src_iri: str = f"{self.SZ_PREFIX}{src_id}"
+            src_iri: str = f"{self.SZ_PREFIX}ds_{src_id}"
 
             rec_id: str = rec["RECORD_ID"]
             rec_iri: str = f"{src_iri}_{rec_id}"
 
-            if "ENTITY_TYPE" in rec and len(ent_type) < 1:
-                ent_type = rec["ENTITY_TYPE"]
-
-            rec_name: str = self.scrub_name(rec["ENTITY_DESC"])
-            top_names[rec_name] += 1
-
             # represent the entity <=> data record relationship using
             # a blank node, to capture the match reason
-            rdf_frag += f"\n[] {self.n3(RDF.subject)} {entity_id} ;"
+            rdf_frag += f"\n[] {self.n3(RDF.subject)} {ent_id} ;"
             rdf_frag += f"\n {self.n3(RDF.predicate)} {self.n3(SKOS.exactMatch)} ;"
             rdf_frag += f"\n {self.n3(RDF.object)} {rec_iri} ;"
             rdf_frag += f"\n {self.n3(SZ.match_key)} \"{match_key}\" ;"
-            rdf_frag += f"\n {self.n3(SZ.match_level)} {match_level} ."
+            rdf_frag += f"\n {self.n3(SZ.match_level)} \"{match_level}\" ;"
+            rdf_frag += "\n."
 
-            rdf_frag += f"\n {entity_id} {self.n3(PROV.wasDerivedFrom)} {rec_iri} ."
+            rdf_frag += f"\n{ent_id} {self.n3(PROV.wasDerivedFrom)} {rec_iri} ."
 
             # represent the data record
             rdf_frag += f"\n{rec_iri} {self.n3(RDF.type)} {self.n3(SZ.DataRecord)} ;"
-            rdf_frag += f"\n {self.n3(SKOS.prefLabel)} \"{rec_name}\"@{language} ;"
             rdf_frag += f"\n {self.n3(DC.identifier)} \"{rec_id}\" ;"
-            rdf_frag += f"\n {self.n3(PROV.wasQuotedFrom)} {src_iri} ."
+            rdf_frag += f"\n {self.n3(PROV.wasQuotedFrom)} {src_iri} ;"
+            rdf_frag += "\n."
 
             # represent the data source -
             # duplicates get ignored during RDF parse
             rdf_frag += f"\n{src_iri} {self.n3(RDF.type)} {self.n3(DCAT.Dataset)} ;"
-            rdf_frag += f"\n {self.n3(DC.identifier)} \"{src_id}\" ."
+            rdf_frag += f"\n {self.n3(DC.identifier)} \"{src_id}\" ;"
+            rdf_frag += "\n."
 
         # parse the related entities
         for rel in data["RELATED_ENTITIES"]:
             match_key = rel["MATCH_KEY"]
-            match_level = rel["MATCH_LEVEL"]
-            match_code = rel["MATCH_LEVEL_CODE"]
+            match_level = rel["MATCH_LEVEL_CODE"]
 
             rel_iri: str = self.SZ_PREFIX + str(rel["ENTITY_ID"])
             rel_pred: str = self.n3(SKOS.related)
 
-            if match_code == "POSSIBLY_SAME":
+            if match_level == "POSSIBLY_SAME":
                 rel_pred = self.n3(SKOS.closeMatch)
 
             # represent the entity <=> related entty relationship
             # using a blank node, to capture the match reason
-            rdf_frag += f"\n[] {self.n3(RDF.subject)} {entity_id} ;"
+            rdf_frag += f"\n[] {self.n3(RDF.subject)} {ent_id} ;"
             rdf_frag += f"\n {self.n3(RDF.predicate)} {rel_pred} ;"
             rdf_frag += f"\n {self.n3(RDF.object)} {rel_iri} ;"
             rdf_frag += f"\n {self.n3(SZ.match_key)} \"{match_key}\" ;"
-            rdf_frag += f"\n {self.n3(SZ.match_level)} {match_level} ."
-
-        # generate the RDF represenation for this entity
-        if ent_type in [ "GENERIC" ]:
-            ent_type = "Person"
-
-        rdf_frag += f"\n{entity_id} {self.n3(RDF.type)} sz:{ent_type.capitalize()} ."
-
-        if len(top_names) > 0:
-            ent_descrip: str = top_names.most_common(1)[0][0]
-            rdf_frag += f"\n{entity_id} {self.n3(SKOS.prefLabel)} \"{ent_descrip}\"@{language} ."
+            rdf_frag += f"\n {self.n3(SZ.match_level)} \"{match_level}\" ;"
+            rdf_frag += "\n."
 
         return rdf_frag
 

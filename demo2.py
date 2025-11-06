@@ -2,38 +2,53 @@
 # -*- coding: utf-8 -*-
 
 """
-Example using `sz_semantics` for Semantic Represenation of Senzing ER results.
+Example using `sz_semantics` for gRPC client/server access to the Senzing SDK.
 
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
+import json
 import logging
 import pathlib
+import tomllib
+import typing
 
-from sz_semantics import Thesaurus
+from sz_semantics import SzClient
 
 
 if __name__ == "__main__":
+    config_path: pathlib.Path = pathlib.Path("config.toml")
+
+    with open(config_path, mode = "rb") as fp:
+        config: dict = tomllib.load(fp)
+
     logger: logging.Logger = logging.getLogger(__name__)
     logging.basicConfig(level = logging.WARNING) # DEBUG
 
-    # initialize a thesaurus and load the Senzing taxonomy
-    thesaurus: Thesaurus = Thesaurus()
-    thesaurus.load_source(Thesaurus.DOMAIN_TTL)
+    data_sources: typing.Dict[ str, str ] = {
+        "CUSTOMERS": "data/truth/customers.json",
+        "WATCHLIST": "data/truth/watchlist.json",
+        "REFERENCE": "data/truth/reference.json",
+    }
 
-    # load the Senzing ER exported JSON, and generate RDF fragments
-    # for representing each Sezning entity -- this could be made
-    # concurrent/parallel with `asynchio`
-    export_path: pathlib.Path = pathlib.Path("data/truth/export.json")
+    # configure the Senzing SDK
+    sz: SzClient = SzClient(
+        config,
+        data_sources,
+        debug = False,
+    )
 
-    with open(export_path, "r", encoding = "utf-8") as fp_json:
-        for line in fp_json:
-            for rdf_frag in thesaurus.parse_iter(line, language = "en"):
-                thesaurus.load_source_text(
-                    Thesaurus.RDF_PREAMBLE + rdf_frag,
-                    format = "turtle",
-                )
+    # run entity resolution on the collection of datasets
+    ents_batch: dict = sz.entity_resolution(
+        data_sources,
+        debug = False,
+    )
 
-    # serialize the Senzing taxonomy + generated thesaurus
-    thesaurus_path: pathlib.Path = pathlib.Path("thesaurus.ttl")
-    thesaurus.save_source(thesaurus_path, format = "turtle")
+    print(json.dumps(ents_batch, indent = 2))
+
+    # serialize JSONL for running `get()` on all entities
+    export_path: pathlib.Path = pathlib.Path("export.json")
+
+    with open(export_path, mode = "w", encoding = "utf-8") as fp:
+        for ent_json in sz.sz_engine.export_json_entity_report_iterator():
+            fp.write(ent_json)

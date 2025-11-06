@@ -73,6 +73,55 @@ provide a distributed key/value store (other than the Python built-in
 `dict` default) to use for scale-out.
 
 
+## Usage: gRPC Client/Server
+
+To use `SzClient` to simplify access to the Senzing SDK, first launch
+the `serve-grpc` container and run it in the background:
+
+```bash
+docker run -it --publish 8261:8261 --rm senzing/serve-grpc
+```
+
+For example code which runs _entity resolution_ on the "truthset"
+collection of datasets:
+
+```python
+import pathlib
+import tomllib
+from sz_semantics import SzClient
+
+with open(pathlib.Path("config.toml"), mode = "rb") as fp:
+    config: dict = tomllib.load(fp)
+
+data_sources: typing.Dict[ str, str ] = {
+    "CUSTOMERS": "data/truth/customers.json",
+    "WATCHLIST": "data/truth/watchlist.json",
+    "REFERENCE": "data/truth/reference.json",
+}
+
+sz: SzClient = SzClient(config, data_sources)
+sz.entity_resolution(data_sources)
+
+for ent_json in sz.sz_engine.export_json_entity_report_iterator():
+    print(ent_json)
+```
+
+For a demo of running entity resolution on the "truthset", run the
+`demo2.py` script:
+
+```bash
+poetry run python3 demo2.py
+```
+
+This produces the `export.json` file which is JSONL representing the
+results of a "get entity" call on each resolved entity.
+
+Note: to show the redo processing, be sure to restart the container
+each time before re-running the `demo2.py` script -- although the
+entity resolution results will be the same even without a container
+restart.
+
+
 ## Usage: Semantic Represenation
 
 Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/)
@@ -112,35 +161,16 @@ thesaurus_path: pathlib.Path = pathlib.Path("thesaurus.ttl")
 thesaurus.save_source(thesaurus_path, format = "turtle")
 ```
 
-For an example, run the `demo2.py` script to process the JSON file
+For an example, run the `demo3.py` script to process the JSON file
 `data/export.json` which captures Senzing ER exported results:
 
 ```bash
-poetry run python3 demo2.py
+poetry run python3 demo3.py data/export.json
 ```
 
-Then check the RDF definitions in the generated `thesaurus.ttl` file.
+Check the resulting RDF definitions in the generated `thesaurus.ttl`
+file.
 
-
-## Usage: gRPC Client/Server
-
-For a demo of `SzClient` to simplify accessing the Senzing SDK via a
-gRPC server, then running _entity resolution_ on the "truthset"
-collection of sample datasets, first launch this container and have it
-running in the background:
-
-```bash
-docker run -it --publish 8261:8261 --rm senzing/serve-grpc
-```
-
-Then run:
-
-```bash
-poetry run python3 demo3.py
-```
-
-Restart the container each time before re-running the `demo3.py`
-script.
 
 ---
 

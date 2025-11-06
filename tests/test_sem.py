@@ -27,10 +27,10 @@ def test_sem (
 Verify that the Senzing ER results are represented correctly in RDF.
     """
     exp_res: set = {
-        "sz:customers_1001",
-        "sz:customers_1002",
-        "sz:customers_1003",
-        "sz:customers_1004",
+        "sz:ds_customers_1001",
+        "sz:ds_customers_1002",
+        "sz:ds_customers_1003",
+        "sz:ds_customers_1004",
     }
 
     # point to the correct directory for input files

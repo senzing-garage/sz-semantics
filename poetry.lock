@@ -613,14 +613,14 @@ files = [
 
 [[package]]
 name = "types-networkx"
-version = "3.5.0.20251001"
+version = "3.5.0.20251104"
 description = "Typing stubs for networkx"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "types_networkx-3.5.0.20251001-py3-none-any.whl", hash = "sha256:4bb9dd0378a52ca57d68f8215f8662e736d800a8ff892b457646eccd828a0230"},
-    {file = "types_networkx-3.5.0.20251001.tar.gz", hash = "sha256:8e3c5c491ba5870d75e175751d70ddeac81df43caf2a64bae161e181f5e8ea7a"},
+    {file = "types_networkx-3.5.0.20251104-py3-none-any.whl", hash = "sha256:8b04b90dae06250c9cd6dde6ed400128a2cb6fbf20b82abdbcc3685cf10f7b60"},
+    {file = "types_networkx-3.5.0.20251104.tar.gz", hash = "sha256:0ae55ff562126dcb7dc6bf0b716a2333b69d5ff6fbcb7f768916eb8bd09fc0c9"},
 ]
 
 [package.dependencies]

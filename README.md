@@ -162,10 +162,10 @@ thesaurus.save_source(thesaurus_path, format = "turtle")
 ```
 
 For an example, run the `demo3.py` script to process the JSON file
-`data/export.json` which captures Senzing ER exported results:
+`data/truth/export.json` which captures Senzing ER exported results:
 
 ```bash
-poetry run python3 demo3.py data/export.json
+poetry run python3 demo3.py data/truth/export.json
 ```
 
 Check the resulting RDF definitions in the generated `thesaurus.ttl`

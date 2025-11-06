@@ -56,7 +56,7 @@ sz:SenzingScheme a skos:ConceptScheme ;
 .
 
 sz:Entity a skos:Concept, nc:EntityType ;
-  owl:equivalentClass ftm:LegalEntity, bods:Entity, wco:Agent ;
+  owl:equivalentClass ftm:LegalEntity, bods:EntityType, wco:Agent, foaf:Agent ;
   dc:identifier wd:Q35120 ;
   skos:definition "Entity is anything that can be considered, discussed, or observed ; in this context, this is generally a Person or Organization"@en ;
   skos:inScheme sz:SenzingScheme ;
@@ -67,7 +67,7 @@ sz:Entity a skos:Concept, nc:EntityType ;
 
 sz:Organization a skos:Concept, nc:OrganizationType ;
   rdfs:subClassOf sz:Entity ;
-  owl:equivalentClass ftm:Organization, wco:Organization ;
+  owl:equivalentClass ftm:Organization, wco:Organization, foaf:Organization ;
   dc:identifier wd:Q43229 ;
   skos:definition "Organization is a social entity established to meet needs or pursue goals"@en ;
   skos:inScheme sz:SenzingScheme ;
@@ -79,9 +79,9 @@ sz:Organization a skos:Concept, nc:OrganizationType ;
 
 sz:Person a skos:Concept, nc:PersonType ;
   rdfs:subClassOf sz:Entity ;
-  owl:equivalentClass ftm:Person, bods:Person, wco:Person ;
+  owl:equivalentClass ftm:Person, bods:PersonType, wco:Person, foaf:Person ;
   dc:identifier wd:Q5 ;
-  skos:definition "Person is any single member of Homo sapiens, unique extant species of the genus Homo"@en ;
+  skos:definition "Person represents an individual human being, distinct from some type of corporation, which may encompass real or deceased people, or their pseudonyms"@en ;
   skos:inScheme sz:SenzingScheme ;
   skos:topConceptOf sz:SenzingScheme ;
   skos:prefLabel "Person"@en ;
@@ -90,7 +90,7 @@ sz:Person a skos:Concept, nc:PersonType ;
 .
 
 sz:DataRecord a skos:Concept ;
-  owl:equivalentClass prov:Entity, wco:TransactionalEvent ;
+  owl:equivalentClass prov:Entity, bods:RecordDetails, wco:TransactionalEvent ;
   dc:identifier wd:Q2470517 ;
   skos:definition "Data Record is a composite data type, as an information block containing specific, identified fields"@en ;
   skos:inScheme sz:SenzingScheme ;

@@ -207,7 +207,7 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
         # parse the resolved data records
         res_ent: dict = data["RESOLVED_ENTITY"]
         ent_id: str = self.SZ_PREFIX + str(res_ent["ENTITY_ID"])
-        ent_name: str = str(res_ent["ENTITY_NAME"])
+        ent_name: str = str(res_ent["ENTITY_NAME"]).replace('"', '\\"')
 
         for features in res_ent["FEATURES"]["RECORD_TYPE"]:
             ent_type: str = features.get("FEAT_DESC")

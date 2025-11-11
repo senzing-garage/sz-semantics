@@ -193,7 +193,7 @@ Kudos to
 [@jbutcher21](https://github.com/jbutcher21),
 [@docktermj](https://github.com/docktermj),
 [@cj2001](https://github.com/cj2001),
-[@503jmt](https://github.com/503jmt),
+[@jesstalisman-ia](https://github.com/jesstalisman-ia),
 and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
 </details>
 

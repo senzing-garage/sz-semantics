@@ -10,7 +10,7 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 
-version = "1.3.1"
+version = "1.3.3"
 requires-python = ">=3.11"
 
 dependencies = [
@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
     "Development Status :: 5 - Production/Stable",
@@ -39,18 +40,23 @@ classifiers = [
 ]
 
 keywords = [
-    "context-engineering",
-    "data-privacy",
-    "entity-resolution",
-    "entity-resolved-knowledge-graph",
+    "bods",
+    "context engineering",
+    "data privacy",
+    "entity resolution",
+    "entity resolved knowledge graph",
+    "followthemoney",
     "grpc",
+    "information exchange",
+    "niem",
     "ontology",
     "rdf",
-    "semantic-layer",
+    "semantic layer",
     "semantics",
     "skos",
     "taxonomy",
     "thesaurus",
+    "worldcat",
 ]
 
 
@@ -59,6 +65,7 @@ keywords = [
 homepage = "https://github.com/senzing-garage/sz-semantics"
 package = "https://pypi.org/project/sz_semantics/"
 semantics = "https://github.com/senzing-garage/sz-semantics/wiki/ns"
+tutorial = "https://github.com/DerwenAI/cdl-2025-masterclass"
 
 
 [tool.poetry]

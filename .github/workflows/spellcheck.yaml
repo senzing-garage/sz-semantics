@@ -1,0 +1,13 @@
+name: spellcheck
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  spellcheck:
+    permissions:
+      contents: read
+    uses: senzing-factory/build-resources/.github/workflows/cspell.yaml@v3

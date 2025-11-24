@@ -14,7 +14,7 @@ There are a number of ways you can contribute:
 
 ## License Agreements
 
-If your contribution modifies the git repository, the following agreements must be established.
+If your contribution modifies the Git repository, the following agreements must be established.
 
 _Note:_ License agreements are only needed for adding, modifying, and deleting artifacts kept within the repository.
 In simple terms, license agreements are needed before pull requests can be accepted.

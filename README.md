@@ -73,7 +73,7 @@ warnings in the logging. Adjust these lists as needed for a given use
 case.
 
 For work with large numbers of entities, subclass `KeyValueStore` to
-provide a distributed key/value store (other than the Python built-in
+provide a distributed key-value store (other than the Python built-in
 `dict` default) to use for scale-out.
 
 ## Usage: gRPC Client/Server

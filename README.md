@@ -173,7 +173,7 @@ file.
 
 ---
 
-![](./assets/mask.png)
+![mask](./assets/mask.png)
 
 ---
 

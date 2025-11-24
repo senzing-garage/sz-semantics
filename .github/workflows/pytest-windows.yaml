@@ -55,7 +55,7 @@ jobs:
         env:
           COVERAGE_FILE: "coverage.${{ matrix.python-version }}"
         run: |
-          Rename-Item -Path.coverage -NewName "$env:COVERAGE_FILE"
+          Rename-Item -Path .coverage -NewName "$env:COVERAGE_FILE"
 
       - name: Store coverage file
         uses: actions/upload-artifact@v5

@@ -23,15 +23,19 @@ from .namespace import SZ
 
 class Thesaurus:
     """
-Represent the domain context using an _ontology pipeline_ process:
-vocabulary, taxonomy, thesaurus, and ontology.
+    Represent the domain context using an _ontology pipeline_ process:
+    vocabulary, taxonomy, thesaurus, and ontology.
     """
+
     SZ_BASE: str = "https://github.com/senzing-garage/sz-semantics/wiki/ns#"
     SZ_PREFIX: str = "sz:"
 
-    DOMAIN_TTL: str = "https://raw.githubusercontent.com/senzing-garage/sz-semantics/refs/heads/main/domain.ttl"  # pylint: disable=C0301
+    DOMAIN_TTL: str = (
+        "https://raw.githubusercontent.com/senzing-garage/sz-semantics/refs/heads/main/domain.ttl"  # pylint: disable=C0301
+    )
 
-    RDF_PREAMBLE: str = """
+    RDF_PREAMBLE: str = (
+        """
 @prefix sz:       <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
 
 @prefix adms:     <http://www.w3.org/ns/adms#> .
@@ -54,123 +58,117 @@ vocabulary, taxonomy, thesaurus, and ontology.
 @prefix wd:       <http://www.wikidata.org/entity/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
         """.lstrip()
+    )
 
-
-    def __init__ (
+    def __init__(
         self,
         *,
         kv_store: KeyValueStore = KeyValueStore(),
-        ) -> None:
+    ) -> None:
         """
-Constructor.
+        Constructor.
 
-This expects the `load_source()` method will be used to load the taxonomy
-directly after constructing an instance.
+        This expects the `load_source()` method will be used to load the taxonomy
+        directly after constructing an instance.
 
-Note: override `KeyValueStore` to replace the Python built-in `dict` for
-larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
+        Note: override `KeyValueStore` to replace the Python built-in `dict` for
+        larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
         """
         self.logger = logging.getLogger(__name__)
         self.kv_store: KeyValueStore = kv_store
 
-        self.rdf_graph: rdflib.Graph = rdflib.Graph(bind_namespaces = "rdflib")
+        self.rdf_graph: rdflib.Graph = rdflib.Graph(bind_namespaces="rdflib")
         self.rdf_graph.bind("dc", DC)
         self.rdf_graph.bind("dcat", DCAT)
         self.rdf_graph.bind("prov", PROV)
         self.rdf_graph.bind("skos", SKOS)
         self.rdf_graph.bind("sz", SZ)
 
-
-    def load_source (
+    def load_source(
         self,
         source: typing.Any,
         *,
         format: str = "turtle",  # pylint: disable=W0622
-        ) -> None:
+    ) -> None:
         """
-Load triples from a data source.
+        Load triples from a data source.
         """
         self.rdf_graph.parse(
             source,
-            format = format,
+            format=format,
         )
 
-
-    def load_source_text (
+    def load_source_text(
         self,
         source: str,
         *,
         format: str = "turtle",  # pylint: disable=W0622
-        ) -> None:
+    ) -> None:
         """
-Load triples from a string as the data source, which in `RDFlib`
-requires a different calling format.
+        Load triples from a string as the data source, which in `RDFlib`
+        requires a different calling format.
         """
         self.rdf_graph.parse(
-            data = source,
-            format = format,
+            data=source,
+            format=format,
         )
 
-
-    def save_source (
+    def save_source(
         self,
         rdf_path: pathlib.Path,
         *,
         format: str = "turtle",  # pylint: disable=W0622
         encoding: str = "utf-8",
-        ) -> None:
+    ) -> None:
         """
-Serialize triples to a file.
+        Serialize triples to a file.
         """
-        with open(rdf_path, "w", encoding = encoding) as fp:
+        with open(rdf_path, "w", encoding=encoding) as fp:
             fp.write(
                 self.rdf_graph.serialize(
-                    format = format,
+                    format=format,
                 )
             )
 
-
-    def n3 (
+    def n3(
         self,
         uri: rdflib.term.URIRef,
-        ) -> str:
+    ) -> str:
         """
-Normalize IRI prefixes to N3 "Turtle" format.
+        Normalize IRI prefixes to N3 "Turtle" format.
         """
         return uri.n3(self.rdf_graph.namespace_manager)
-
 
     ######################################################################
     ## parse Senzing JSON
 
     @classmethod
-    def scrub_name (
+    def scrub_name(
         cls,
         name: str,
-        ) -> str:
+    ) -> str:
         """
-Scrub disallowed characters from a name going into an RDF language property.
+        Scrub disallowed characters from a name going into an RDF language property.
         """
         return name.replace('"', "'").strip()
 
-
-    def parse_iter (
+    def parse_iter(
         self,
         data: dict | list | str,
         *,
         language: str = "en",
         debug: bool = False,
-        ) -> typing.Iterator[ str ]:
+    ) -> typing.Iterator[str]:
         """
-Handle the different formats for JSON responses from the Senzing SDK
-(dictionary, list, or JSONL string) then generate RDF representation
-for each entity.
+        Handle the different formats for JSON responses from the Senzing SDK
+        (dictionary, list, or JSONL string) then generate RDF representation
+        for each entity.
         """
         if isinstance(data, dict):
             yield self._parse_entity(
                 data,
-                language = language,
-                debug = debug,
+                language=language,
+                debug=debug,
             )
 
         elif isinstance(data, list):
@@ -178,27 +176,26 @@ for each entity.
                 if "RESOLVED_ENTITY" in data_item:
                     yield self._parse_entity(
                         data_item,
-                        language = language,
-                        debug = debug,
+                        language=language,
+                        debug=debug,
                     )
 
         elif isinstance(data, str):
             yield self._parse_entity(
                 json.loads(data),
-                language = language,
-                debug = debug,
+                language=language,
+                debug=debug,
             )
 
-
-    def _parse_entity (  # pylint: disable=R0913,R0914,R0915
+    def _parse_entity(  # pylint: disable=R0913,R0914,R0915
         self,
         data: dict,
         *,
         language: str = "en",
         debug: bool = False,
-        ) -> str:
+    ) -> str:
         """
-Transform a Senzing entity, parsed from JSON, into RDF representation.
+        Transform a Senzing entity, parsed from JSON, into RDF representation.
         """
         if debug:
             log_msg: str = f"jsonl: {data}"
@@ -212,13 +209,13 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
         for features in res_ent["FEATURES"]["RECORD_TYPE"]:
             ent_type: str = features.get("FEAT_DESC")
 
-        if ent_type in [ "GENERIC" ]:
+        if ent_type in ["GENERIC"]:
             ent_type = "Person"
 
-        # generate the RDF represenation for this entity
+        # generate the RDF representation for this entity
         rdf_frag: str = ""
         rdf_frag += f"\n{ent_id} {self.n3(RDF.type)} sz:{ent_type.capitalize()} ;"
-        rdf_frag += f"\n {self.n3(SKOS.prefLabel)} \"{ent_name}\"@{language} ;"
+        rdf_frag += f'\n {self.n3(SKOS.prefLabel)} "{ent_name}"@{language} ;'
         rdf_frag += "\n."
 
         for rec in res_ent["RECORDS"]:
@@ -242,22 +239,22 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
             rdf_frag += f"\n[] {self.n3(RDF.subject)} {ent_id} ;"
             rdf_frag += f"\n {self.n3(RDF.predicate)} {self.n3(SKOS.exactMatch)} ;"
             rdf_frag += f"\n {self.n3(RDF.object)} {rec_iri} ;"
-            rdf_frag += f"\n {self.n3(SZ.match_key)} \"{match_key}\" ;"
-            rdf_frag += f"\n {self.n3(SZ.match_level)} \"{match_level}\" ;"
+            rdf_frag += f'\n {self.n3(SZ.match_key)} "{match_key}" ;'
+            rdf_frag += f'\n {self.n3(SZ.match_level)} "{match_level}" ;'
             rdf_frag += "\n."
 
             rdf_frag += f"\n{ent_id} {self.n3(PROV.wasDerivedFrom)} {rec_iri} ."
 
             # represent the data record
             rdf_frag += f"\n{rec_iri} {self.n3(RDF.type)} {self.n3(SZ.DataRecord)} ;"
-            rdf_frag += f"\n {self.n3(DC.identifier)} \"{rec_id}\" ;"
+            rdf_frag += f'\n {self.n3(DC.identifier)} "{rec_id}" ;'
             rdf_frag += f"\n {self.n3(PROV.wasQuotedFrom)} {src_iri} ;"
             rdf_frag += "\n."
 
             # represent the data source -
             # duplicates get ignored during RDF parse
             rdf_frag += f"\n{src_iri} {self.n3(RDF.type)} {self.n3(DCAT.Dataset)} ;"
-            rdf_frag += f"\n {self.n3(DC.identifier)} \"{src_id}\" ;"
+            rdf_frag += f'\n {self.n3(DC.identifier)} "{src_id}" ;'
             rdf_frag += "\n."
 
         # parse the related entities
@@ -271,34 +268,33 @@ Transform a Senzing entity, parsed from JSON, into RDF representation.
             if match_level == "POSSIBLY_SAME":
                 rel_pred = self.n3(SKOS.closeMatch)
 
-            # represent the entity <=> related entty relationship
+            # represent the entity <=> related entity relationship
             # using a blank node, to capture the match reason
             rdf_frag += f"\n[] {self.n3(RDF.subject)} {ent_id} ;"
             rdf_frag += f"\n {self.n3(RDF.predicate)} {rel_pred} ;"
             rdf_frag += f"\n {self.n3(RDF.object)} {rel_iri} ;"
-            rdf_frag += f"\n {self.n3(SZ.match_key)} \"{match_key}\" ;"
-            rdf_frag += f"\n {self.n3(SZ.match_level)} \"{match_level}\" ;"
+            rdf_frag += f'\n {self.n3(SZ.match_key)} "{match_key}" ;'
+            rdf_frag += f'\n {self.n3(SZ.match_level)} "{match_level}" ;'
             rdf_frag += "\n."
 
         return rdf_frag
 
-
     ######################################################################
     ## Deprecated: parse the semantics of Senzing ER JSON
 
-    def get_name (  # pylint: disable=R0912,R0915
+    def get_name(  # pylint: disable=R0912,R0915
         self,
         record_id: str,
         rec_type: str,
         rec: dict,
-        org_map: dict[ str, str ],
-        ) -> tuple[ str, str, list[ str ] ]:
+        org_map: dict[str, str],
+    ) -> tuple[str, str, list[str]]:
         """
-Extract the name and optional employer from a data record.
+        Extract the name and optional employer from a data record.
         """
         name: str = record_id
         employer: str = ""
-        urls: list[ str ] = []
+        urls: list[str] = []
 
         if rec_type == self.n3(SZ.Organization):
             if "NAMES" in rec:

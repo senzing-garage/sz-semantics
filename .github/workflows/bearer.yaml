@@ -1,0 +1,28 @@
+name: bearer
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: rule_check-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  rule_check:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Bearer
+        uses: bearer/bearer-action@v2
+        with:
+          config-file: .github/linters/bearer.yml

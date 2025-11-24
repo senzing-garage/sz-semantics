@@ -1,0 +1,45 @@
+name: isort
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: isort-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  isort:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m venv ./venv
+          source ./venv/bin/activate
+          echo "PATH=${PATH}" >> "${GITHUB_ENV}"
+          python -m pip install --upgrade pip
+          python -m pip install --group all .
+
+      - name: Run isort
+        uses: isort/isort-action@v1
+        with:
+          sort-paths: "examples src/template_python tests"

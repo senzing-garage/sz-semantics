@@ -1,0 +1,56 @@
+name: pylint
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pylint-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  pylint:
+    outputs:
+      status: ${{ job.status }}
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m venv ./venv
+          source ./venv/bin/activate
+          echo "PATH=${PATH}" >> "${GITHUB_ENV}"
+          python -m pip install --upgrade pip
+          python -m pip install --group all .
+
+      - name: Analysing the code with pylint
+        run: |
+          # shellcheck disable=SC2046
+          pylint $(git ls-files '*.py' ':!:docs/source/*')
+
+  slack-notification:
+    needs: [pylint]
+    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.pylint.outputs.status ) && github.ref_name == github.event.repository.default_branch }}
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    uses: senzing-factory/build-resources/.github/workflows/build-failure-slack-notification.yaml@v3
+    with:
+      job-status: ${{ needs.pylint.outputs.status }}

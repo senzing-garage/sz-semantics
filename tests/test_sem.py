@@ -4,7 +4,7 @@
 """
 unit tests:
 
-  * Semantic Represenation
+  * Semantic Representation
 
 see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
@@ -19,12 +19,12 @@ from rdflib.plugins.sparql.processor import SPARQLResult
 from sz_semantics import Thesaurus
 
 
-def test_sem (
+def test_sem(
     *,
     debug: bool = False,  # pylint: disable=W0613
-    ) -> None:
+) -> None:
     """
-Verify that the Senzing ER results are represented correctly in RDF.
+    Verify that the Senzing ER results are represented correctly in RDF.
     """
     exp_res: set = {
         "sz:ds_customers_1001",
@@ -42,26 +42,28 @@ Verify that the Senzing ER results are represented correctly in RDF.
     thesaurus: Thesaurus = Thesaurus()
     thesaurus.load_source(domain_path)
 
-    # write the preamble of RDF vocabular prefixes
-    fp_rdf: tempfile._TemporaryFileWrapper = tempfile.NamedTemporaryFile(  # pylint: disable=R1732
-        mode = "w",
-        encoding = "utf-8",
-        delete = False,
+    # write the preamble of RDF vocabulary prefixes
+    fp_rdf: tempfile._TemporaryFileWrapper = (
+        tempfile.NamedTemporaryFile(  # pylint: disable=R1732
+            mode="w",
+            encoding="utf-8",
+            delete=False,
+        )
     )
 
     fp_rdf.write(Thesaurus.RDF_PREAMBLE)
 
     # load the Senzing ER exported JSON, and generate RDF fragments
-    # for representing each Sezning entity
+    # for representing each Senzing entity
     export_path: pathlib.Path = base_dir / "data/truth/export.json"
 
-    with open(export_path, "r", encoding = "utf-8") as fp_json:
+    with open(export_path, "r", encoding="utf-8") as fp_json:
         for line in fp_json:
-            for rdf_frag in thesaurus.parse_iter(line, language = "en"):
+            for rdf_frag in thesaurus.parse_iter(line, language="en"):
                 fp_rdf.write(rdf_frag)
                 fp_rdf.write("\n")
 
-    thesaurus.load_source(fp_rdf.name, format = "turtle")
+    thesaurus.load_source(fp_rdf.name, format="turtle")
 
     # map the entities to data records
     query: str = """
@@ -90,4 +92,4 @@ WHERE {
 
 
 if __name__ == "__main__":
-    test_sem(debug = True)
+    test_sem(debug=True)

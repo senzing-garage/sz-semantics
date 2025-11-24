@@ -1,0 +1,26 @@
+name: Add to project garage dependabot
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  add-to-project-dependabot:
+    permissions:
+      repository-projects: write
+    secrets:
+      SENZING_GITHUB_PROJECT_RW_TOKEN: ${{ secrets.SENZING_GITHUB_PROJECT_RW_TOKEN }}
+    uses: senzing-factory/build-resources/.github/workflows/add-to-project-dependabot.yaml@v3
+    with:
+      project: ${{ vars.SENZING_PROJECT_GARAGE }}
+
+  slack-notification:
+    needs: [add-to-project-dependabot]
+    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.add-to-project-dependabot.outputs.job-status) }}
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    uses: senzing-factory/build-resources/.github/workflows/build-failure-slack-notification.yaml@v3
+    with:
+      job-status: ${{ needs.add-to-project-dependabot.outputs.job-status }}

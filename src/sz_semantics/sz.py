@@ -19,18 +19,18 @@ import grpc
 
 class SzClient:
     """
-Handling typical Senzing SDK interactions via a gRPC server.
+    Handling typical Senzing SDK interactions via a gRPC server.
     """
 
-    def __init__ (
+    def __init__(
         self,
         config: dict,
         data_sources: dict,
         *,
         debug: bool = False,
-        ) -> None:
+    ) -> None:
         """
-Constructor.
+        Constructor.
         """
         self.logger: logging.Logger = logging.getLogger(__name__)
 
@@ -44,14 +44,18 @@ Constructor.
             log_msg: str = f"version: {json.dumps(version_json)}"
             self.logger.debug(log_msg)
 
-        sz_configmanager: SzConfigManagerGrpc = sz_abstract_factory.create_configmanager()
+        sz_configmanager: SzConfigManagerGrpc = (
+            sz_abstract_factory.create_configmanager()
+        )
 
         self.sz_diagnostic: SzDiagnosticGrpc = sz_abstract_factory.create_diagnostic()
         self.sz_engine: SzEngineGrpc = sz_abstract_factory.create_engine()
 
         # register the datasets
         config_id: int = sz_configmanager.get_default_config_id()
-        sz_config: SzConfigGrpc = sz_configmanager.create_config_from_config_id(config_id)
+        sz_config: SzConfigGrpc = sz_configmanager.create_config_from_config_id(
+            config_id
+        )
 
         for dataset in data_sources.keys():
             try:
@@ -74,23 +78,22 @@ Constructor.
         sz_configmanager.replace_default_config_id(config_id, new_config_id)
         sz_abstract_factory.reinitialize(new_config_id)
 
-
-    def entity_resolution (  # pylint: disable=R0914
+    def entity_resolution(  # pylint: disable=R0914
         self,
         data_sources: dict,
         *,
         debug: bool = False,
-        ) -> dict:
+    ) -> dict:
         """
-Load datasets into Senzing and run entity resolution, returning a
-dictionary of the resolved entities.
+        Load datasets into Senzing and run entity resolution, returning a
+        dictionary of the resolved entities.
         """
         affected_entities: set = set()
 
         for dataset in data_sources.values():
             data_path: pathlib.Path = pathlib.Path(dataset)
 
-            for line in data_path.open(encoding = "utf-8"):  # pylint: disable=R1732
+            for line in data_path.open(encoding="utf-8"):  # pylint: disable=R1732
                 dat: dict = json.loads(line.strip())
 
                 if debug:
@@ -111,7 +114,7 @@ dictionary of the resolved entities.
                 info: dict = json.loads(rec_info)
 
                 affected_entities.update(
-                    [ entity["ENTITY_ID"] for entity in info["AFFECTED_ENTITIES"] ]
+                    [entity["ENTITY_ID"] for entity in info["AFFECTED_ENTITIES"]]
                 )
 
         # handle "REDO"
@@ -123,7 +126,7 @@ dictionary of the resolved entities.
 
             rec_info = self.sz_engine.process_redo_record(
                 redo_record,
-                flags = szengineflags.SzEngineFlags.SZ_WITH_INFO,
+                flags=szengineflags.SzEngineFlags.SZ_WITH_INFO,
             )
 
             info = json.loads(rec_info)
@@ -133,7 +136,7 @@ dictionary of the resolved entities.
                 self.logger.debug(log_msg)
 
             affected_entities.update(
-                [ entity["ENTITY_ID"] for entity in info["AFFECTED_ENTITIES"] ]
+                [entity["ENTITY_ID"] for entity in info["AFFECTED_ENTITIES"]]
             )
 
         # enumerate the resolved entities
@@ -152,14 +155,12 @@ dictionary of the resolved entities.
 
                 entity_to_record[entity_id] = {
                     "name": dat["RESOLVED_ENTITY"]["ENTITY_NAME"],
-                    "records": [ rec_list[i]["RECORD_ID"] for i in range(len(rec_list)) ],
+                    "records": [rec_list[i]["RECORD_ID"] for i in range(len(rec_list))],
                 }
 
             except szerror.SzError:
                 # this entity has effectively been removed
-                entity_to_record[entity_id] = {
-                    "name": None
-                }
+                entity_to_record[entity_id] = {"name": None}
 
         ent_ref: dict = {}
 
@@ -177,12 +178,11 @@ dictionary of the resolved entities.
 
         return ent_ref
 
-
-    def get_entity (
+    def get_entity(
         self,
         entity_id: int,
-        ) -> str:
+    ) -> str:
         """
-Accessor to get a JSON description for a given entity ID.
+        Accessor to get a JSON description for a given entity ID.
         """
         return self.sz_engine.get_entity_by_entity_id(entity_id)

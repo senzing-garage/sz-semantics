@@ -23,7 +23,7 @@ if __name__ == "__main__":
     ## load a JSON file to use as input, from the CLI argument
     data_path: str = sys.argv[1]
 
-    with open(pathlib.Path(data_path), "r", encoding = "utf-8") as fp:
+    with open(pathlib.Path(data_path), "r", encoding="utf-8") as fp:
         data: typing.Any = json.load(fp)
 
     ## mask the PII values in the data
@@ -31,12 +31,12 @@ if __name__ == "__main__":
 
     masked_data: typing.Any = sz_mask.mask_data(
         data,
-        debug = False, # True
+        debug=False,  # True
     )
 
     masked_text: str = json.dumps(
         masked_data,
-        indent = 2,
+        indent=2,
     )
 
     print("   ###  MASKED PII:")

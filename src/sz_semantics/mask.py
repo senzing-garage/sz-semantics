@@ -19,13 +19,14 @@ from .util import KeyValueStore
 
 class Mask:
     """
-Mask the PII values within Senzing output with tokens, which can be
-substituted back later.
+    Mask the PII values within Senzing output with tokens, which can be
+    substituted back later.
     """
+
     PAT_KEY_PAIR: re.Pattern = re.compile(r"^([\w\_\-]+)\:\s+(.*)$")
     PAT_TOKEN: re.Pattern = re.compile(r"([A-Z_]+_\d+)")
 
-    KNOWN_KEYS: set[ str ] = {
+    KNOWN_KEYS: set[str] = {
         "AMOUNT",
         "CANDIDATE_CAP_REACHED",
         "CANDIDATE_FEAT_USAGE_TYPE",
@@ -61,7 +62,7 @@ substituted back later.
         "WHY_KEY",
     }
 
-    MASKED_KEYS: set[ str ] = {
+    MASKED_KEYS: set[str] = {
         "ACCT_NUM",
         "CANDIDATE_FEAT_DESC",
         "DATA_SOURCE",
@@ -81,51 +82,48 @@ substituted back later.
         "RECORD_ID",
     }
 
-
-    def __init__ (
+    def __init__(
         self,
         *,
         kv_store: KeyValueStore = KeyValueStore(),
-        ) -> None:
+    ) -> None:
         """
-Constructor.
+        Constructor.
 
-Override `KeyValueStore` to replace the Python built-in `dict` for
-larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
+        Override `KeyValueStore` to replace the Python built-in `dict` for
+        larger scale such as [`rocksdict`](https://github.com/rocksdict/rocksdict).
 
-Add values to `KNOWN_KEYS` and `MASKED_KEYS` as needed for
-a given use case.
+        Add values to `KNOWN_KEYS` and `MASKED_KEYS` as needed for
+        a given use case.
         """
         self.logger = logging.getLogger(__name__)
         self.key_count: Counter = Counter()
 
-        self.tokens: dict[ str, str ] = kv_store.allocate()
+        self.tokens: dict[str, str] = kv_store.allocate()
 
-
-    def serialize_json (
+    def serialize_json(
         self,
         data: list | dict,
         out_file: pathlib.Path,
         *,
         encoding: str = "utf-8",
-        ) -> None:
+    ) -> None:
         """
-Serialize a data structure from JSON to a text file in pretty-print
-format.
+        Serialize a data structure from JSON to a text file in pretty-print
+        format.
         """
-        with open(out_file, "w", encoding = encoding) as fp:
-            fp.write(json.dumps(data, indent = 2))
+        with open(out_file, "w", encoding=encoding) as fp:
+            fp.write(json.dumps(data, indent=2))
             fp.write("\n")
 
-
-    def unmask_text (
+    def unmask_text(
         self,
         text: str,
         *,
         debug: bool = False,
-        ) -> str:
+    ) -> str:
         """
-Substitute the original PII values for masked tokens within a text.
+        Substitute the original PII values for masked tokens within a text.
         """
         last_head: int = 0
         collected: list = []
@@ -153,14 +151,13 @@ Substitute the original PII values for masked tokens within a text.
         collected.append(text[last_head:])
         return "".join(collected)
 
-
-    def mask_value (
+    def mask_value(
         self,
         key: str,
         elem: typing.Any,
-        ) -> str:
+    ) -> str:
         """
-Mask a one PII value represented as a key/value pair.
+        Mask a one PII value represented as a key/value pair.
         """
         if elem in self.tokens.values():
             # has this value been previously seen?
@@ -177,22 +174,21 @@ Mask a one PII value represented as a key/value pair.
 
         return masked_elem
 
-
-    def dive_key_pair (
+    def dive_key_pair(
         self,
         key: str,
         elem: typing.Any,
         *,
         debug: bool = False,
-        ) -> list:
+    ) -> list:
         """
-Handle a key pair for a literal value.
+        Handle a key pair for a literal value.
         """
         if isinstance(elem, list):
-            return [ key, self.mask_data(elem, debug = debug) ]
+            return [key, self.mask_data(elem, debug=debug)]
 
         if isinstance(elem, dict):
-            return [ key, self.mask_data(elem, debug = debug) ]
+            return [key, self.mask_data(elem, debug=debug)]
 
         if key in self.MASKED_KEYS:
             if debug:
@@ -205,10 +201,10 @@ Handle a key pair for a literal value.
                 log_msg = f"NOT MASKED: {elem} == {masked_elem}"
                 self.logger.error(log_msg)
 
-            return [ key, masked_elem ]
+            return [key, masked_elem]
 
         if isinstance(elem, int) or key in self.KNOWN_KEYS:
-            return [ key, elem ]
+            return [key, elem]
 
         if isinstance(elem, str):
             log_msg = f"UNKNOWN key: {key} {elem}"
@@ -220,41 +216,37 @@ Handle a key pair for a literal value.
                 log_msg = f"NOT MASKED: {elem} == {masked_elem}"
                 self.logger.error(log_msg)
 
-            return [ key, masked_elem ]
+            return [key, masked_elem]
 
         # otherwise pass through
         if debug:
             log_msg = f"{key} {type(elem)}"
             self.logger.debug(log_msg)
 
-        return self.mask_data(elem, debug = debug)  # type: ignore
+        return self.mask_data(elem, debug=debug)  # type: ignore
 
-
-    def mask_data (
+    def mask_data(
         self,
         data: list | dict,
         *,
         debug: bool = False,
-        ) -> list | dict:
+    ) -> list | dict:
         """
-Recursive descent through JSON data structures (lists, dictionaries)
-until reaching kev/value pairs or a collection of string literals.
+        Recursive descent through JSON data structures (lists, dictionaries)
+        until reaching kev/value pairs or a collection of string literals.
         """
         if debug:
             rep: str = f"\n{str(type(data))}: {str(data)[:50]} ..."
             self.logger.debug(rep)
 
         if isinstance(data, list):
-            return [
-                self.mask_data(elem, debug = debug)
-                for elem in data
-            ]
+            return [self.mask_data(elem, debug=debug) for elem in data]
 
         if isinstance(data, dict):
             dict_items: dict = {}
 
             for key, elem in data.items():
-                pair: list = self.dive_key_pair(key, elem, debug = debug)
+                pair: list = self.dive_key_pair(key, elem, debug=debug)
                 dict_items[pair[0]] = pair[1]
 
             return dict_items
@@ -265,7 +257,7 @@ until reaching kev/value pairs or a collection of string literals.
             if hit is not None:
                 key = hit.group(1)
                 elem = hit.group(2)
-                pair = self.dive_key_pair(key, elem, debug = debug)
+                pair = self.dive_key_pair(key, elem, debug=debug)
                 result: str = f"{pair[0]}: {pair[1]}"
 
                 return result
@@ -274,7 +266,7 @@ until reaching kev/value pairs or a collection of string literals.
             return data
 
         # a more serious edge case, since we should already have
-        # full coverage on the possible data types from eleemnts
+        # full coverage on the possible data types from elements
         # of deserialized JSON
         log_msg = f"Unknown data type: {type(data)}"
         self.logger.error(log_msg)

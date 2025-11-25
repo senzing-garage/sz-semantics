@@ -1,0 +1,9 @@
+# Extends the default yamllint config by adjusting some options.
+extends: default
+
+rules:
+  comments-indentation: disable
+  line-length:
+    level: warning
+    allow-non-breakable-inline-mappings: true
+  truthy: disable

@@ -1,13 +1,19 @@
 # sz_semantics
 
-Transform JSON output from the [Senzing SDK](https://senzing.com/docs/python/)
-for use with graph technologies, semantics, and downstream LLM integration.
+If you are beginning your journey with [Senzing],
+please start with [Senzing Quick Start guides].
 
+You are in the [Senzing Garage] where projects are "tinkered" on.
+Although this GitHub repository may help you understand an approach to using Senzing,
+it's not considered to be "production ready" and is not considered to be part of the Senzing product.
+Heck, it may not even be appropriate for your application of Senzing!
+
+Transform JSON output from the [Senzing SDK]
+for use with graph technologies, semantics, and downstream LLM integration.
 
 ## Install
 
-This library uses [`poetry`](https://python-poetry.org/docs/) for
-demos:
+This library uses [`poetry`] for demos:
 
 ```bash
 poetry update
@@ -16,17 +22,15 @@ poetry update
 Otherwise, to use the library:
 
 ```bash
-pip install sz_sematics
+pip install sz_semantics
 ```
 
-For the [gRCP server](https://github.com/senzing-garage/serve-grpc), 
-if you don't already have Senzing and its gRPC server otherwise
+For the [gRCP server], if you don't already have Senzing and its gRPC server otherwise
 installed pull the latest Docker container:
 
 ```bash
 docker pull senzing/serve-grpc:latest
 ```
-
 
 ## Usage: Masking PII
 
@@ -61,17 +65,16 @@ poetry run python3 demo1.py data/get.json
 The two lists `Mask.KNOWN_KEYS` and `Mask.MASKED_KEYS` enumerate
 respectively the:
 
-  * keys for known elements which do not require masking
-  * keys for PII elements which require masking
+- keys for known elements which do not require masking
+- keys for PII elements which require masking
 
 Any other keys encountered will be masked by default and reported as
 warnings in the logging. Adjust these lists as needed for a given use
 case.
 
 For work with large numbers of entities, subclass `KeyValueStore` to
-provide a distributed key/value store (other than the Python built-in
+provide a distributed key-value store (other than the Python built-in
 `dict` default) to use for scale-out.
-
 
 ## Usage: gRPC Client/Server
 
@@ -121,19 +124,16 @@ each time before re-running the `demo2.py` script -- although the
 entity resolution results will be the same even without a container
 restart.
 
+## Usage: Semantic Representation
 
-## Usage: Semantic Represenation
-
-Starting with a small [SKOS-based taxonomy](https://www.w3.org/2004/02/skos/)
+Starting with a small [SKOS-based taxonomy]
 in the `domain.ttl` file, parse the Senzing
-[_entity resolution_](https://senzing.com/what-is-entity-resolution/)
-(ER) results to generate an 
-[`RDFlib`](https://rdflib.readthedocs.io/) _semantic graph_.
+[_entity resolution_] (ER) results to generate an
+[`RDFlib`] _semantic graph_.
 
 In other words, generate the "backbone" for constructing an
-[_Entity Resolved Knowledge Graph_](https://senzing.com/entity-resolved-knowledge-graphs/),
-as a core componet of a
-[_semantic layer_](https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/).
+[_Entity Resolved Knowledge Graph_], as a core component of a
+[_semantic layer_].
 
 The example code below serializes the _thesaurus_ generated from
 Senzing ER results as `"thesaurus.ttl"` combined with the Senzing
@@ -171,10 +171,9 @@ poetry run python3 demo3.py data/truth/export.json
 Check the resulting RDF definitions in the generated `thesaurus.ttl`
 file.
 
-
 ---
 
-![](./assets/mask.png)
+![mask](./assets/mask.png)
 
 ---
 
@@ -182,22 +181,40 @@ file.
   <summary>License and Copyright</summary>
 
 Source code for `sz_semantics` plus any logo, documentation, and
-examples have an [MIT license](https://spdx.org/licenses/MIT.html)
+examples have an [Apache license]
 which is succinct and simplifies use in commercial applications.
 
 All materials herein are Copyright © 2025 Senzing, Inc.
+
 </details>
 
-Kudos to 
-[@brianmacy](https://github.com/brianmacy),
-[@jbutcher21](https://github.com/jbutcher21),
-[@docktermj](https://github.com/docktermj),
-[@cj2001](https://github.com/cj2001),
-[@jesstalisman-ia](https://github.com/jesstalisman-ia),
-and the kind folks at [GraphGeeks](https://graphgeeks.org/) for their support.
-</details>
+Kudos to
+[@brianmacy],
+[@jbutcher21],
+[@docktermj],
+[@cj2001],
+[@jesstalisman-ia],
+and the kind folks at [GraphGeeks] for their support.
 
+</details>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=senzing-garage/sz-semantics&type=Date)](https://star-history.com/#senzing-garage/sz-semantics&Date)
+[![Star History Chart]](https://star-history.com/#senzing-garage/sz-semantics&Date)
+
+[_entity resolution_]: https://senzing.com/what-is-entity-resolution/
+[_Entity Resolved Knowledge Graph_]: https://senzing.com/entity-resolved-knowledge-graphs/
+[_semantic layer_]: https://enterprise-knowledge.com/what-is-a-semantic-layer-components-and-enterprise-applications/
+[@brianmacy]: https://github.com/brianmacy
+[@cj2001]: https://github.com/cj2001
+[@docktermj]: https://github.com/docktermj
+[@jbutcher21]: https://github.com/jbutcher21
+[@jesstalisman-ia]: https://github.com/jesstalisman-ia
+[`poetry`]: https://python-poetry.org/docs/
+[`RDFlib`]: https://rdflib.readthedocs.io/
+[Apache license]: LICENSE
+[GraphGeeks]: https://graphgeeks.org/
+[gRCP server]: https://github.com/senzing-garage/serve-grpc
+[Senzing SDK]: https://senzing.com/docs/python/
+[SKOS-based taxonomy]: https://www.w3.org/2004/02/skos/
+[Star History Chart]: https://api.star-history.com/svg?repos=senzing-garage/sz-semantics&type=Date

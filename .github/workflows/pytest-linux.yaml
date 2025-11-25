@@ -1,0 +1,84 @@
+name: pytest linux
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "15 7 * * *"
+
+env:
+  PYTHONPATH: ${{ github.workspace }}/src
+  SENZING_TOOLS_DATABASE_URL: sqlite3://na:na@nowhere/tmp/sqlite/G2C.db
+
+permissions: {}
+
+jobs:
+  pytest-linux:
+    concurrency:
+      group: pytest-linux-${{ matrix.python-version }}-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+    name: "pytest with Senzing: OS: ${{ matrix.os }}; Python ${{ matrix.python-version }}"
+    permissions:
+      contents: read
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m venv ./venv
+          source ./venv/bin/activate
+          echo "PATH=${PATH}" >> "${GITHUB_ENV}"
+          python -m pip install --upgrade pip
+          python -m pip install --group all .
+
+      - name: Run pytest
+        run: |
+          source ./venv/bin/activate
+          pytest tests/ --verbose --capture=no --cov=src --cov-append
+
+      - name: Rename coverage file
+        env:
+          COVERAGE_FILE: "coverage.${{ matrix.python-version }}"
+        run: |
+          mv .coverage "$COVERAGE_FILE"
+
+      - name: Store coverage file
+        uses: actions/upload-artifact@v5
+        with:
+          name: "coverage-${{ matrix.python-version }}"
+          path: "coverage.${{ matrix.python-version }}"
+
+  coverage:
+    if: github.event_name == 'pull_request'
+    name: Coverage
+    needs: pytest-linux
+    permissions:
+      pull-requests: write
+      contents: write
+    uses: senzing-factory/build-resources/.github/workflows/python-coverage-comment.yaml@v3
+
+  slack-notification:
+    needs: [pytest-linux]
+    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.pytest-linux.result ) && (github.ref_name == github.event.repository.default_branch || github.event_name == 'schedule') }}
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    uses: senzing-factory/build-resources/.github/workflows/build-failure-slack-notification.yaml@v3
+    with:
+      job-status: ${{ needs.pytest-linux.result }}

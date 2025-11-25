@@ -11,4 +11,6 @@ import os.path
 import pathlib
 import sys
 
-sys.path.insert(0, str(pathlib.Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, str(pathlib.Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)

@@ -11,6 +11,8 @@ import rdflib
 
 BODS: rdflib.Namespace = rdflib.Namespace("https://vocab.openownership.org/terms#")
 FTM: rdflib.Namespace = rdflib.Namespace("https://schema.followthemoney.tech/#")
-SZ: rdflib.Namespace = rdflib.Namespace("https://github.com/senzing-garage/sz-semantics/wiki/ns#")
+SZ: rdflib.Namespace = rdflib.Namespace(
+    "https://github.com/senzing-garage/sz-semantics/wiki/ns#"
+)
 WCO: rdflib.Namespace = rdflib.Namespace("https://id.oclc.org/worldcat/ontology/")
 WD: rdflib.Namespace = rdflib.Namespace("http://www.wikidata.org/entity/")

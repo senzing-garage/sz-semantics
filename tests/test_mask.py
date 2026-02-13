@@ -10,6 +10,7 @@ see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 """
 
 import json
+import typing
 
 from sz_semantics import Mask
 
@@ -22,7 +23,7 @@ def test_mask(
     Verify that the mask/unmask roundtrip protects and preserves the
     PII values correctly.
     """
-    exp_data: dict = {
+    exp_data: dict[str, typing.Any] = {
         "RESOLVED_ENTITY": {
             "ENTITY_ID": 1,
             "ENTITY_NAME": "Robert Smith",
@@ -43,7 +44,7 @@ def test_mask(
     obs_text: str = json.dumps(masked_data, sort_keys=True)
     assert exp_text == obs_text
 
-    obs_data: dict = json.loads(sz_mask.unmask_text(obs_text))
+    obs_data: dict[str, typing.Any] = json.loads(sz_mask.unmask_text(obs_text))
     assert sorted(exp_data.items()) == sorted(obs_data.items())
 
 

@@ -152,7 +152,7 @@ class Thesaurus:
 
     def parse_iter(
         self,
-        data: dict | list | str,
+        data: dict[str, typing.Any] | list[typing.Any] | str,
         *,
         language: str = "en",
         debug: bool = False,
@@ -187,7 +187,7 @@ class Thesaurus:
 
     def _parse_entity(  # pylint: disable=R0913,R0914,R0915
         self,
-        data: dict,
+        data: dict[str, typing.Any],
         *,
         language: str = "en",
         debug: bool = False,
@@ -200,7 +200,7 @@ class Thesaurus:
             self.logger.debug(log_msg)
 
         # parse the resolved data records
-        res_ent: dict = data["RESOLVED_ENTITY"]
+        res_ent: dict[str, typing.Any] = data["RESOLVED_ENTITY"]
         ent_id: str = self.SZ_PREFIX + str(res_ent["ENTITY_ID"])
         ent_name: str = str(res_ent["ENTITY_NAME"]).replace('"', '\\"')
 
@@ -284,7 +284,7 @@ class Thesaurus:
         self,
         record_id: str,
         rec_type: str,
-        rec: dict,
+        rec: dict[str, typing.Any],
         org_map: dict[str, str],
     ) -> tuple[str, str, list[str]]:
         """
@@ -296,7 +296,7 @@ class Thesaurus:
 
         if rec_type == self.n3(SZ.Organization):
             if "NAMES" in rec:
-                names: dict = rec["NAMES"][0]
+                names: dict[str, typing.Any] = rec["NAMES"][0]
 
                 if "PRIMARY_NAME_ORG" in names:
                     name = names.get("PRIMARY_NAME_ORG").strip()  # type: ignore

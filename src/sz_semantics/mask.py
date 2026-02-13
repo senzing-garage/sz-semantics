@@ -23,8 +23,8 @@ class Mask:
     substituted back later.
     """
 
-    PAT_KEY_PAIR: re.Pattern = re.compile(r"^([\w\_\-]+)\:\s+(.*)$")
-    PAT_TOKEN: re.Pattern = re.compile(r"([A-Z_]+_\d+)")
+    PAT_KEY_PAIR: re.Pattern[str] = re.compile(r"^([\w\_\-]+)\:\s+(.*)$")
+    PAT_TOKEN: re.Pattern[str] = re.compile(r"([A-Z_]+_\d+)")
 
     KNOWN_KEYS: set[str] = {
         "AMOUNT",
@@ -97,13 +97,13 @@ class Mask:
         a given use case.
         """
         self.logger = logging.getLogger(__name__)
-        self.key_count: Counter = Counter()
+        self.key_count: Counter[str] = Counter()
 
         self.tokens: dict[str, str] = kv_store.allocate()
 
     def serialize_json(
         self,
-        data: list | dict,
+        data: list[typing.Any] | dict[str, typing.Any],
         out_file: pathlib.Path,
         *,
         encoding: str = "utf-8",
@@ -126,7 +126,7 @@ class Mask:
         Substitute the original PII values for masked tokens within a text.
         """
         last_head: int = 0
-        collected: list = []
+        collected: list[str] = []
 
         for hit in self.PAT_TOKEN.finditer(text):
             key: str = hit.group(0)
@@ -180,7 +180,7 @@ class Mask:
         elem: typing.Any,
         *,
         debug: bool = False,
-    ) -> list:
+    ) -> list[typing.Any]:
         """
         Handle a key pair for a literal value.
         """
@@ -227,10 +227,10 @@ class Mask:
 
     def mask_data(
         self,
-        data: list | dict,
+        data: list[typing.Any] | dict[str, typing.Any],
         *,
         debug: bool = False,
-    ) -> list | dict:
+    ) -> list[typing.Any] | dict[str, typing.Any]:
         """
         Recursive descent through JSON data structures (lists, dictionaries)
         until reaching kev/value pairs or a collection of string literals.
@@ -243,16 +243,16 @@ class Mask:
             return [self.mask_data(elem, debug=debug) for elem in data]
 
         if isinstance(data, dict):
-            dict_items: dict = {}
+            dict_items: dict[str, typing.Any] = {}
 
             for key, elem in data.items():
-                pair: list = self.dive_key_pair(key, elem, debug=debug)
+                pair: list[typing.Any] = self.dive_key_pair(key, elem, debug=debug)
                 dict_items[pair[0]] = pair[1]
 
             return dict_items
 
         if isinstance(data, str):
-            hit: re.Match | None = self.PAT_KEY_PAIR.match(data)
+            hit: re.Match[str] | None = self.PAT_KEY_PAIR.match(data)
 
             if hit is not None:
                 key = hit.group(1)

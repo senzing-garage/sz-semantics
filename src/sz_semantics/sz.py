@@ -11,6 +11,7 @@ see copyright/license https://github.com/senzing-garage/sz-semantics/README.md
 import json
 import logging
 import pathlib
+import typing
 
 from senzing import szengineflags, szerror
 from senzing_grpc import (  # type: ignore
@@ -31,8 +32,8 @@ class SzClient:
 
     def __init__(
         self,
-        config: dict,
-        data_sources: dict,
+        config: dict[str, typing.Any],
+        data_sources: dict[str, str],
         *,
         debug: bool = False,
     ) -> None:
@@ -87,21 +88,21 @@ class SzClient:
 
     def entity_resolution(  # pylint: disable=R0914
         self,
-        data_sources: dict,
+        data_sources: dict[str, str],
         *,
         debug: bool = False,
-    ) -> dict:
+    ) -> dict[str, typing.Any]:
         """
         Load datasets into Senzing and run entity resolution, returning a
         dictionary of the resolved entities.
         """
-        affected_entities: set = set()
+        affected_entities: set[int] = set()
 
         for dataset in data_sources.values():
             data_path: pathlib.Path = pathlib.Path(dataset)
 
             for line in data_path.open(encoding="utf-8"):  # pylint: disable=R1732
-                dat: dict = json.loads(line.strip())
+                dat: dict[str, typing.Any] = json.loads(line.strip())
 
                 if debug:
                     log_msg: str = f"entity: {dat}"
@@ -118,7 +119,7 @@ class SzClient:
                     log_msg = f"load: {rec_info}"
                     self.logger.debug(log_msg)
 
-                info: dict = json.loads(rec_info)
+                info: dict[str, typing.Any] = json.loads(rec_info)
 
                 affected_entities.update(
                     [entity["ENTITY_ID"] for entity in info["AFFECTED_ENTITIES"]]
@@ -147,7 +148,7 @@ class SzClient:
             )
 
         # enumerate the resolved entities
-        entity_to_record: dict = {}
+        entity_to_record: dict[int, typing.Any] = {}
 
         for entity_id in affected_entities:
             try:
@@ -158,7 +159,7 @@ class SzClient:
                     self.logger.debug(log_msg)
 
                 dat = json.loads(sz_json)
-                rec_list: list = dat["RESOLVED_ENTITY"]["RECORDS"]
+                rec_list: list[typing.Any] = dat["RESOLVED_ENTITY"]["RECORDS"]
 
                 entity_to_record[entity_id] = {
                     "name": dat["RESOLVED_ENTITY"]["ENTITY_NAME"],
@@ -169,7 +170,7 @@ class SzClient:
                 # this entity has effectively been removed
                 entity_to_record[entity_id] = {"name": None}
 
-        ent_ref: dict = {}
+        ent_ref: dict[str, typing.Any] = {}
 
         for entity_id, ent in entity_to_record.items():
             name: str | None = ent.get("name")
@@ -192,4 +193,5 @@ class SzClient:
         """
         Accessor to get a JSON description for a given entity ID.
         """
-        return self.sz_engine.get_entity_by_entity_id(entity_id)
+        result: str = self.sz_engine.get_entity_by_entity_id(entity_id)
+        return result

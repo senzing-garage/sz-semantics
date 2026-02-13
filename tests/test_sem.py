@@ -26,7 +26,7 @@ def test_sem(
     """
     Verify that the Senzing ER results are represented correctly in RDF.
     """
-    exp_res: set = {
+    exp_res: set[str] = {
         "sz:ds_customers_1001",
         "sz:ds_customers_1002",
         "sz:ds_customers_1003",
@@ -43,7 +43,7 @@ def test_sem(
     thesaurus.load_source(domain_path)
 
     # write the preamble of RDF vocabulary prefixes
-    fp_rdf: tempfile._TemporaryFileWrapper = (
+    fp_rdf: tempfile._TemporaryFileWrapper[str] = (
         tempfile.NamedTemporaryFile(  # pylint: disable=R1732
             mode="w",
             encoding="utf-8",
@@ -74,7 +74,7 @@ WHERE {
 
     qres: SPARQLResult = thesaurus.rdf_graph.query(query)  # type: ignore
 
-    obs_res: set = {
+    obs_res: set[str] = {
         str(uri.n3(thesaurus.rdf_graph.namespace_manager))
         for row in qres
         for uri in row  # type: ignore

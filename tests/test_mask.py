@@ -33,10 +33,10 @@ def test_mask(
     }
 
     exp_text: str = (
-        """
-        {"RESOLVED_ENTITY": {"ADDRESS_DATA": ["HOME: HOME_1"], "ENTITY_ID": 1, "ENTITY_NAME": "ENTITY_NAME_1", "IDENTIFIER_DATA": ["EMAIL: EMAIL_1"]}}
-    """.strip()
-    )  # pylint: disable=C0301
+        '{"RESOLVED_ENTITY": {"ADDRESS_DATA": ["HOME: HOME_1"],'
+        ' "ENTITY_ID": 1, "ENTITY_NAME": "ENTITY_NAME_1",'
+        ' "IDENTIFIER_DATA": ["EMAIL: EMAIL_1"]}}'
+    )
 
     sz_mask: Mask = Mask()
     masked_data: dict = sz_mask.mask_data(exp_data)  # type: ignore

@@ -43,7 +43,7 @@ def test_sem(
     thesaurus.load_source(domain_path)
 
     # write the preamble of RDF vocabulary prefixes
-    fp_rdf: tempfile._TemporaryFileWrapper[str] = (
+    fp_rdf: tempfile._TemporaryFileWrapper[str] = (  # pylint: disable=E1136
         tempfile.NamedTemporaryFile(  # pylint: disable=R1732
             mode="w",
             encoding="utf-8",

@@ -15,11 +15,6 @@ and this project adheres to [Semantic Versioning].
 - Tightened type annotations in demo scripts and library modules
 - Improved file path handling in demo scripts to use absolute path resolution
 
-### Fixed in 1.3.4
-
-- Fixed typo in pip install command in README (`sz_sematics` corrected to `sz_semantics`)
-- Fixed spelling errors in README, demo scripts, and tests ("Represenation", "componet", "Sezning", "vocabular")
-
 ## [1.0.1] - yyyy-mm-dd
 
 ### Added to 1.0.1

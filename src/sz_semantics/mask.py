@@ -112,7 +112,7 @@ class Mask:
         Serialize a data structure from JSON to a text file in pretty-print
         format.
         """
-        with open(out_file, "w", encoding=encoding) as fp:
+        with open(pathlib.Path(out_file).resolve(), "w", encoding=encoding) as fp:
             fp.write(json.dumps(data, indent=2))
             fp.write("\n")
 

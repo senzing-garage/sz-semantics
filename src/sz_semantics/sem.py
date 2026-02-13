@@ -13,7 +13,6 @@ import logging
 import pathlib
 import typing
 
-from rdflib import Namespace  # pylint: disable=W0611
 from rdflib.namespace import DC, DCAT, PROV, RDF, SKOS
 import rdflib
 
@@ -31,11 +30,11 @@ class Thesaurus:
     SZ_PREFIX: str = "sz:"
 
     DOMAIN_TTL: str = (
-        "https://raw.githubusercontent.com/senzing-garage/sz-semantics/refs/heads/main/domain.ttl"  # pylint: disable=C0301
+        "https://raw.githubusercontent.com/senzing-garage/"
+        "sz-semantics/refs/heads/main/domain.ttl"
     )
 
-    RDF_PREAMBLE: str = (
-        """
+    RDF_PREAMBLE: str = """\
 @prefix sz:       <https://github.com/senzing-garage/sz-semantics/wiki/ns#> .
 
 @prefix adms:     <http://www.w3.org/ns/adms#> .
@@ -57,8 +56,7 @@ class Thesaurus:
 @prefix wco:      <https://id.oclc.org/worldcat/ontology/> .
 @prefix wd:       <http://www.wikidata.org/entity/> .
 @prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
-        """.lstrip()
-    )
+"""
 
     def __init__(
         self,
@@ -123,7 +121,7 @@ class Thesaurus:
         """
         Serialize triples to a file.
         """
-        with open(rdf_path, "w", encoding=encoding) as fp:
+        with open(pathlib.Path(rdf_path).resolve(), "w", encoding=encoding) as fp:
             fp.write(
                 self.rdf_graph.serialize(
                     format=format,
@@ -140,7 +138,7 @@ class Thesaurus:
         return uri.n3(self.rdf_graph.namespace_manager)
 
     ######################################################################
-    ## parse Senzing JSON
+    # parse Senzing JSON
 
     @classmethod
     def scrub_name(
@@ -280,7 +278,7 @@ class Thesaurus:
         return rdf_frag
 
     ######################################################################
-    ## Deprecated: parse the semantics of Senzing ER JSON
+    # Deprecated: parse the semantics of Senzing ER JSON
 
     def get_name(  # pylint: disable=R0912,R0915
         self,
@@ -332,10 +330,18 @@ class Thesaurus:
                 name = rec.get("PRIMARY_NAME_LAST").strip()  # type: ignore
 
                 if "PRIMARY_NAME_MIDDLE" in rec:
-                    name = rec.get("PRIMARY_NAME_MIDDLE").strip() + " " + name  # type: ignore
+                    name = (
+                        rec.get("PRIMARY_NAME_MIDDLE").strip()  # type: ignore
+                        + " "
+                        + name
+                    )
 
                 if "PRIMARY_NAME_FIRST" in rec:
-                    name = rec.get("PRIMARY_NAME_FIRST").strip() + " " + name  # type: ignore
+                    name = (
+                        rec.get("PRIMARY_NAME_FIRST").strip()  # type: ignore
+                        + " "
+                        + name
+                    )
 
             elif "NAME_LAST" in rec:
                 name = rec.get("NAME_LAST").strip()  # type: ignore

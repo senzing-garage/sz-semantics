@@ -13,7 +13,14 @@ import logging
 import pathlib
 
 from senzing import szengineflags, szerror
-from senzing_grpc import SzAbstractFactoryGrpc, SzConfigManagerGrpc, SzDiagnosticGrpc, SzEngineGrpc, SzConfigGrpc, SzProductGrpc  # type: ignore  # pylint: disable=C0301
+from senzing_grpc import (  # type: ignore
+    SzAbstractFactoryGrpc,
+    SzConfigGrpc,
+    SzConfigManagerGrpc,
+    SzDiagnosticGrpc,
+    SzEngineGrpc,
+    SzProductGrpc,
+)
 import grpc
 
 

@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # for representing each Senzing entity
     export_path: pathlib.Path = pathlib.Path(sys.argv[1])
 
-    with open(export_path, "r", encoding="utf-8") as fp_json:
+    with open(export_path.resolve(), "r", encoding="utf-8") as fp_json:
         for line in fp_json:
             for rdf_frag in thesaurus.parse_iter(line, language="en"):
                 thesaurus.load_source_text(

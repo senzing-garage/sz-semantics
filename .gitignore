@@ -212,5 +212,5 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-settings.local.json
+.claude/settings.local.json
 .history

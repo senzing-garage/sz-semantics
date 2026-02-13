@@ -1,8 +1,0 @@
-{
-  "includeCoAuthoredBy": false,
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:raw.githubusercontent.com)"
-    ]
-  }
-}

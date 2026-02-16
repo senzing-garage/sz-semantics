@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning].
 
 ## [Unreleased]
 
-- Thing 6
-- Thing 5
+## [1.3.4] - 2026-02-13
+
+### Changed in 1.3.4
+
+- Normalized code style across library modules, demo scripts, and tests to follow PEP 8 conventions
+- Tightened type annotations in demo scripts and library modules
+- Improved file path handling in demo scripts to use absolute path resolution
 
 ## [1.0.1] - yyyy-mm-dd
 

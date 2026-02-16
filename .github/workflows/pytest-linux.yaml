@@ -72,7 +72,7 @@ jobs:
     permissions:
       pull-requests: write
       contents: write
-    uses: senzing-factory/build-resources/.github/workflows/python-coverage-comment.yaml@v3
+    uses: senzing-factory/build-resources/.github/workflows/python-coverage-comment.yaml@v4
 
   slack-notification:
     needs: [pytest-linux]

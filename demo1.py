@@ -23,7 +23,7 @@ if __name__ == "__main__":
     ## load a JSON file to use as input, from the CLI argument
     data_path: str = sys.argv[1]
 
-    with open(pathlib.Path(data_path), "r", encoding="utf-8") as fp:
+    with open(pathlib.Path(data_path).resolve(), "r", encoding="utf-8") as fp:
         data: typing.Any = json.load(fp)
 
     ## mask the PII values in the data

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.WARNING)  # DEBUG
 
     # configure the Senzing SDK
-    config: dict[str, dict] = {"sz": {"grpc_server": "localhost:8261"}}
+    config: dict[str, dict[str, str]] = {"sz": {"grpc_server": "localhost:8261"}}
 
     data_sources: dict[str, str] = {
         "CUSTOMERS": "data/truth/customers.json",

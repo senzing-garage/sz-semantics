@@ -16,7 +16,7 @@ class KeyValueStore:  # pylint: disable=R0903
 
     def allocate(
         self,
-    ) -> dict:
+    ) -> dict[str, str]:
         """
         Override if you want to use an alternative to the Python built-in
         `dict` data structure.

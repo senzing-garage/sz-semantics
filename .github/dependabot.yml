@@ -1,13 +1,23 @@
-# Please see the documentation for all configuration options:
-# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
+---
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: "github-actions"
+    assignees:
+      - "kernelsam"
+    cooldown:
+      default-days: 21
+      exclude:
+        - "senzing-factory/*"
+    directory: "/"
+    groups:
+      senzing-factory:
+        patterns:
+          - "senzing-factory/*"
     schedule:
-      interval: daily
-  - package-ecosystem: pip
-    directory: /
+      interval: "daily"
+  - package-ecosystem: "pip"
+    cooldown:
+      default-days: 21
+    directory: "/"
     schedule:
-      interval: daily
+      interval: "daily"

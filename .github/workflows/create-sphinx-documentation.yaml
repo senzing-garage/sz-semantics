@@ -10,8 +10,6 @@ permissions: {}
 
 jobs:
   docs:
-    outputs:
-      status: ${{ job.status }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -51,10 +49,10 @@ jobs:
 
   slack-notification:
     needs: [docs]
-    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.docs.outputs.status ) }}
+    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.docs.result ) }}
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
     uses: senzing-factory/build-resources/.github/workflows/build-failure-slack-notification.yaml@v4
     with:
-      job-status: ${{ needs.docs.outputs.status }}
+      job-status: ${{ needs.docs.result }}

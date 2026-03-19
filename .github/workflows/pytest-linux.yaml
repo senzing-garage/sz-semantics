@@ -60,7 +60,7 @@ jobs:
           mv .coverage "$COVERAGE_FILE"
 
       - name: Store coverage file
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "coverage-${{ matrix.python-version }}"
           path: "coverage.${{ matrix.python-version }}"

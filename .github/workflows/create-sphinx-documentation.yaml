@@ -47,12 +47,10 @@ jobs:
           publish_dir: _build/
           force_orphan: true
 
-  slack-notification:
-    needs: [docs]
-    if: ${{ always() && contains(fromJSON('["failure", "cancelled"]'), needs.docs.result ) }}
-    secrets:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-    uses: senzing-factory/build-resources/.github/workflows/build-failure-slack-notification.yaml@v4
-    with:
-      job-status: ${{ needs.docs.result }}
+      - name: Notify Slack on failure
+        if: failure() || cancelled()
+        uses: senzing-factory/build-resources/slack-failure-notification@v4
+        with:
+          job-status: ${{ job.status }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL }}
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}

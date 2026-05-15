@@ -59,24 +59,6 @@ this action runs [Fast Python Vulnerability Scanner] and [pip-audit].
     - [Fast Python Vulnerability Scanner]
     - [pypa/gh-action-pip-audit]
 
-## docker-build-container.yaml
-
-When a Pull Request is made against the `main` branch,
-this action verifies that the `Dockerfile` can be successfully built.
-
-_Note:_ The Docker image is **not** pushed to [DockerHub].
-
-- [Docker Build Container GitHub Action]
-  - Uses: [senzing-factory/github-action-docker-buildx-build]
-
-## docker-push-containers-to-dockerhub.yaml
-
-After a [Semantic Version] release is created,
-this action builds Docker images on multiple architectures and pushes the Docker images to [DockerHub].
-
-- [Docker Push Containers to DockerHub GitHub Action]
-  - Uses: [senzing-factory/github-action-docker-buildx-build]
-
 ## flake8.yaml
 
 When a change is committed to GitHub or a Pull Request is made against the `main` branch,
@@ -136,7 +118,6 @@ this action runs [pytest] on the Darwin/macOS platform to perform unit tests and
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -149,7 +130,6 @@ this action runs [pytest] on the Linux platform to perform unit tests and code c
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -162,7 +142,6 @@ this action runs [pytest] on the Windows platform to perform unit tests and code
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -213,5 +192,4 @@ this action runs [pytest] on the Windows platform to perform unit tests and code
 [senzing-factory/build-resources/.../lint-workflows.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/lint-workflows.yaml
 [senzing-factory/build-resources/.../move-pr-to-done-dependabot.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/move-pr-to-done-dependabot.yaml
 [senzing-factory/github-action-docker-buildx-build]: https://github.com/senzing-factory/github-action-docker-buildx-build
-[senzing-factory/github-action-install-senzing-sdk]: https://github.com/senzing-factory/github-action-install-senzing-sdk
 [super-linter]: https://github.com/super-linter/super-linter

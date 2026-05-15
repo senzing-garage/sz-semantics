@@ -226,7 +226,8 @@
     "virtualenv",
     "WATCHLIST",
     "worldcat",
-    "XLITERATOR"
+    "XLITERATOR",
+    "zizmor"
   ],
   "ignorePaths": [
     ".git/**",

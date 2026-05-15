@@ -2,6 +2,9 @@
 extends: default
 
 rules:
+  document-start: disable
+  comments:
+    min-spaces-from-content: 1
   comments-indentation: disable
   line-length:
     level: warning

@@ -59,24 +59,6 @@ this action runs [Fast Python Vulnerability Scanner] and [pip-audit].
     - [Fast Python Vulnerability Scanner]
     - [pypa/gh-action-pip-audit]
 
-## docker-build-container.yaml
-
-When a Pull Request is made against the `main` branch,
-this action verifies that the `Dockerfile` can be successfully built.
-
-_Note:_ The Docker image is **not** pushed to [DockerHub].
-
-- [Docker Build Container GitHub Action]
-  - Uses: [senzing-factory/github-action-docker-buildx-build]
-
-## docker-push-containers-to-dockerhub.yaml
-
-After a [Semantic Version] release is created,
-this action builds Docker images on multiple architectures and pushes the Docker images to [DockerHub].
-
-- [Docker Push Containers to DockerHub GitHub Action]
-  - Uses: [senzing-factory/github-action-docker-buildx-build]
-
 ## flake8.yaml
 
 When a change is committed to GitHub or a Pull Request is made against the `main` branch,
@@ -136,7 +118,6 @@ this action runs [pytest] on the Darwin/macOS platform to perform unit tests and
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -149,7 +130,6 @@ this action runs [pytest] on the Linux platform to perform unit tests and code c
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -162,7 +142,6 @@ this action runs [pytest] on the Windows platform to perform unit tests and code
   - Uses:
     - [actions/checkout]
     - [actions/setup-python]
-    - [senzing-factory/github-action-install-senzing-sdk]
     - [pytest]
     - [actions/upload-artifact]
 
@@ -181,9 +160,6 @@ this action runs [pytest] on the Windows platform to perform unit tests and code
 [Black]: https://github.com/psf/black
 [Dependabot Approve and Merge GitHub Action]: dependabot-approve-and-merge.yaml
 [dependency-scan.yaml]: dependency-scan.yaml
-[Docker Build Container GitHub Action]: docker-build-container.yaml
-[Docker Push Containers to DockerHub GitHub Action]: docker-push-containers-to-dockerhub.yaml
-[DockerHub]: https://hub.docker.com/
 [Fast Python Vulnerability Scanner]: https://github.com/vanschelven/fpvs/
 [flake8.yaml]: flake8.yaml
 [flake8]: https://flake8.pycqa.org/en/latest/
@@ -205,13 +181,10 @@ this action runs [pytest] on the Windows platform to perform unit tests and code
 [pytest-linux.yaml]: pytest-linux.yaml
 [pytest-windows.yaml]: pytest-windows.yaml
 [pytest]: https://docs.pytest.org/en/stable/
-[Semantic Version]: https://semver.org/
 [senzing-factory/build-resources/.../add-labels-to-issue.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/add-labels-to-issue.yaml
 [senzing-factory/build-resources/.../add-to-project-dependabot.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/add-to-project-dependabot.yaml
 [senzing-factory/build-resources/.../add-to-project.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/add-to-project.yaml
 [senzing-factory/build-resources/.../dependabot-approve-and-merge.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/dependabot-approve-and-merge.yaml
 [senzing-factory/build-resources/.../lint-workflows.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/lint-workflows.yaml
 [senzing-factory/build-resources/.../move-pr-to-done-dependabot.yaml]: https://github.com/senzing-factory/build-resources/blob/main/.github/workflows/move-pr-to-done-dependabot.yaml
-[senzing-factory/github-action-docker-buildx-build]: https://github.com/senzing-factory/github-action-docker-buildx-build
-[senzing-factory/github-action-install-senzing-sdk]: https://github.com/senzing-factory/github-action-install-senzing-sdk
 [super-linter]: https://github.com/super-linter/super-linter

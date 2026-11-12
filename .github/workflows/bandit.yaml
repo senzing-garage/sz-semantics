@@ -1,11 +1,11 @@
-name: bandit
+name: Bandit
 
 on:
   pull_request:
     branches: [main]
 
 concurrency:
-  group: bandit-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 permissions: {}
@@ -13,16 +13,7 @@ permissions: {}
 jobs:
   bandit:
     permissions:
-      security-events: write
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12"]
-
-    steps:
-      - name: Run Bandit Scan
-        uses: PyCQA/bandit-action@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-          targets: examples src
+      contents: read
+    uses: senzing-factory/build-resources/.github/workflows/bandit.yaml@v4
+    with:
+      targets: examples src
